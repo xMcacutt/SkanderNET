@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageLicenseExpression>PolyForm-NonCommercial-1.0.0</PackageLicenseExpression>
+        <Version>1.0.0</Version>
+        <TargetFramework>net45</TargetFramework>
+        <PackageId>SkanderNET</PackageId>
+        <LangVersion>6</LangVersion>
+        <Authors>xMcacutt</Authors>
+        <PackageTags>Skylanders</PackageTags>
+        <Description>NetFramework4.6 and C# 6.0 compatible library for comunicating with the Skylanders portal.</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LibUsbDotNet" Version="3.0.87-alpha" />
+    </ItemGroup>
+
+</Project>

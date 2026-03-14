@@ -1,0 +1,14 @@
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\SkanderNET.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\SkanderNET.pdb
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\LibUsbDotNet.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\System.Buffers.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\System.Memory.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.csproj.AssemblyReference.cache
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.AssemblyInfoInputs.cache
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.AssemblyInfo.cs
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.csproj.CoreCompileInputs.cache
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.csproj.Up2Date
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.dll
+C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\obj\Release\net45\SkanderNET.pdb

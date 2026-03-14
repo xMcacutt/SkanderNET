@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>SkanderNET</id>
+    <version>1.0.0</version>
+    <authors>xMcacutt</authors>
+    <license type="expression">PolyForm-NonCommercial-1.0.0</license>
+    <licenseUrl>https://licenses.nuget.org/PolyForm-NonCommercial-1.0.0</licenseUrl>
+    <description>NetFramework4.6 and C# 6.0 compatible library for comunicating with the Skylanders portal.</description>
+    <tags>Skylanders</tags>
+    <repository type="git" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="LibUsbDotNet" version="3.0.87-alpha" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\admin\RiderProjects\SkanderNET\SkanderNET\bin\Release\net45\SkanderNET.dll" target="lib\net45\SkanderNET.dll" />
+  </files>
+</package>
