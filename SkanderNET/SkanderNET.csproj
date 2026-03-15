@@ -1,21 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageLicenseExpression>PolyForm-NonCommercial-1.0.0</PackageLicenseExpression>
+        <PackageLicenseExpression>PolyForm-Noncommercial-1.0.0</PackageLicenseExpression>
         <Version>1.0.0</Version>
         <TargetFramework>net45</TargetFramework>
         <PackageId>SkanderNET</PackageId>
         <LangVersion>6</LangVersion>
         <Authors>xMcacutt</Authors>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/xMcacutt/SkanderNET</PackageProjectUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Skylanders</PackageTags>
-        <PackageIconUrl>https://raw.githubusercontent.com/xMcacutt/SkanderNET/refs/heads/master/Icon.png</PackageIconUrl>
+        <PackageIcon>Icon.png</PackageIcon>
         <Description>NetFramework4.6 and C# 6.0 compatible library for comunicating with the Skylanders portal.</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
-
+    
     <ItemGroup>
-      <PackageReference Include="LibUsbDotNet" Version="3.0.87-alpha" />
+        <PackageReference Include="LibUsbDotNet" Version="3.0.87-alpha" />
+        <None Include="Icon.png" Pack="true" PackagePath="\"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>
