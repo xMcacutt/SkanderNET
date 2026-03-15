@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -105,11 +106,13 @@ namespace SkanderNET
             return genericData != null;
         }
 
-        private void EnsureLoaded()
+        private void EnsureLoaded([CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0)
         {
             if (!_loaded)
                 throw new SkylanderNotLoadedException(
-                    "Skylander was read from or written to before being fully loaded. " +
+                    $"Skylander data accessed before loaded at {member} ({Path.GetFileName(file)}:{line}) " +
                     "Subscribe to Portal.OnSkylanderProcessed to guarantee loading success.");
         }
         
@@ -159,7 +162,7 @@ namespace SkanderNET
         }
 #endif
 
-        private const bool DebugGetAllBlocks = true;
+        private const bool DebugGetAllBlocks = false;
         internal void HandleBlock(uint blockIndex, byte[] data)
         {
             if (blockIndex < 0x2)

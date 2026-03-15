@@ -1,47 +1,64 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using LibUsbDotNet;
-using LibUsbDotNet.LibUsb;
-using LibUsbDotNet.Main;
 
 namespace SkanderNET
 {
     public class PortalFinder
     {
-        private static readonly int Vid = 0x1430;
-        private static readonly int[] Pids = { 0x1F17, 0x0150 };
+        private static readonly ushort Vid = 0x1430;
+        private static readonly ushort[] Pids = { 0x1F17, 0x0150 };
         public static Action<Portal> OnPortalFound;
         private static bool _activePortal;
-
-        internal static void Reset() { _activePortal = false; }
+        private static IntPtr _context;
+        private static bool _cancelRequested;
+        private static Thread _workerThread;
         
-        public static async Task FindPortals(CancellationToken ct)
+        internal static void Reset() { _activePortal = false; }
+
+        public static void InitSearch()
         {
-            while (!ct.IsCancellationRequested)
+            _workerThread = new Thread(FindPortals);
+            _workerThread.IsBackground = true;
+            _workerThread.Start();
+        }
+
+        public static void Close()
+        {
+            _cancelRequested = true;
+            if (_workerThread != null && _workerThread.IsAlive)
+                _workerThread.Join();
+        } 
+        
+        private static void FindPortals()
+        {
+            try
             {
-                foreach (var pid in Pids)
+
+                LibUsb.libusb_init(out _context);
+
+                while (!_cancelRequested)
                 {
-                    if (_activePortal)
-                        break;
-                    var context = new UsbContext();
-                    var devices = context.List();
-                    var device = devices.FirstOrDefault(d => d.VendorId == Vid && d.ProductId == pid);
-                    if (device != null)
+                    foreach (var pid in Pids)
                     {
-                        var portal = new Portal(device, context);
-                        OnPortalFound.Invoke(portal);
-                        _activePortal = true;
+                        if (_activePortal)
+                            break;
+                        var handle = LibUsb.libusb_open_device_with_vid_pid(_context, Vid, pid);
+                        if (handle != IntPtr.Zero)
+                        {
+                            var portal = new Portal(handle, _context);
+                            OnPortalFound?.Invoke(portal);
+                            _activePortal = true;
+                            break;
+                        }
                     }
 
-                    foreach (var usbDevice in devices.Where(d => d != device))
-                        usbDevice.Dispose();
-                    if (device == null)
-                        context.Dispose();
+                    Thread.Sleep(5000);
                 }
-
-                await Task.Delay(1000, ct);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
     }

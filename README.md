@@ -1,21 +1,29 @@
 ﻿# SkanderNET
 ![](./SocialImage.png)
-A NET Framework 4.6, C# 6.0 compatible library for connecting to Skylanders portals.
+A multiframework compatible library for connecting to Skylanders portals.
 ## Usage
+This library depends on libusb. You must manually provide this library. Be aware that bundling this library with libusb as
+a single library is not permitted as discussed in [Licensing]{#licensing}.
+
+Use the correct libusb dll for your build system and architecture and provide it as a dll with your library or application.
+Avoid statically linking against libusb when using SkanderNET.
+[The libusb project can be found here](https://github.com/libusb/libusb/releases)
+
 Before communicating with the portal and figures, the portal must first be discovered.
-This can be achieved with a simple loop. 
-The PortalFinder requires a cancellation token. Declare a new token source and provide the token.
 ```cs
 PortalFinder.OnPortalFound += OnPortalFound;
-Task.Run(async () => { await PortalFinder.FindPortals(cts.Token); }, cts.Token);
+PortalFinder.InitSearch();
 ```
-Alternatively this can be designated to a background worker or coroutine (Unity).
+This should be closed before PortalFinder is destroyed with
+```cs
+PortalFinder.Close();
+```
 
 When a portal is found, the `OnPortalFound` event is invoked providing a portal object.
 This should be stored for communications.
 
-As long as the `PortalFinder` task is running, any disconnected and reconnected portals will be re-detected.
-Only one portal may be active at a time due to USB context constraints.
+As long as the `PortalFinder` thread is running, any disconnected and reconnected portals will be re-detected.
+Only one portal may be active at a time.
 
 The Portal object provides the following events for subscription:
 ```cs
@@ -88,14 +96,12 @@ Usage of this tool for the purposes of piracy or violating the protections place
 using System;
 using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using SkanderNET;
 
 namespace SkanderNET_Example
 {
     internal class Program
     {
-        static CancellationTokenSource cts = new CancellationTokenSource();
         static Portal _currentPortal;
         
         static void OnPortalFound(Portal portal)
@@ -109,7 +115,7 @@ namespace SkanderNET_Example
             
             portal.OnReady += () =>
             {
-                Task.Run(() =>
+                new Thread(() =>
                 {
                     for (int flashIndex = 0; flashIndex < 2; flashIndex++)
                     {
@@ -119,7 +125,7 @@ namespace SkanderNET_Example
                         Thread.Sleep(200);
                     }
                     portal.SetColor(0, 255, 0);
-                });
+                }).Start();
             };
             
             portal.OnSkylanderPlaced += (slot, skylander) =>
@@ -149,7 +155,16 @@ namespace SkanderNET_Example
         public static void Main(string[] args)
         {
             PortalFinder.OnPortalFound += OnPortalFound;
-            Task.Run(async () => { await PortalFinder.FindPortals(cts.Token); }, cts.Token);
+            PortalFinder.InitSearch();
+            while (true)
+            {
+                var key = Console.ReadKey();
+                if (key.Key == ConsoleKey.C)
+                    _currentPortal?.Dispose();
+                if (key.Key == ConsoleKey.X)
+                    break;
+            }
+            PortalFinder.Close();
         }
 
         static void SetColorFromElement(Portal portal, SkylanderElement element)
@@ -206,9 +221,9 @@ The full license for this project can be found in the License file provided but 
 This project is licensed under Polyform Non-Commercial 1.0.0. 
 Any modification of this library is permitted but must be redistributed under Polyform Non-Commercial 1.0.0.
 
-This library also interfaces with LibUsbDotNet and therefore libusb, both of which are licensed under LGPL3.
-As a result, any distribution of this library must maintain all components as separate libraries.
-LibUsbDotNet therefore remains licensed under LGPL and SkanderNET under Polyform.
+This library also interfaces with libusb, which is licensed under LGPL3.
+As a result, any distribution of this library must maintain all libusb as a separate library.
+libusb therefore remains licensed under LGPL and SkanderNET under Polyform.
 Statically linking both libraries into a single library or binary is prohibited as it forms a license conflict.
 
 Any work distributed with this library may not be used for any commercial gains as expressed in the full Polyform license.

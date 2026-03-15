@@ -23,17 +23,17 @@ namespace SkanderNET
 
             byte[] key = GenerateKey(sector0, blockIndex);
 
-            Aes aes = Aes.Create();
-            aes.Key = key;
-            aes.Mode = CipherMode.ECB;
-            aes.BlockSize = 128;
-            aes.Padding = PaddingMode.None;
+            byte[] result = null;
+            using (var aes = Aes.Create())
+            {
+                aes.Key = key;
+                aes.Mode = CipherMode.ECB;
+                aes.BlockSize = 128;
+                aes.Padding = PaddingMode.None;
 
-            ICryptoTransform decrypter = aes.CreateDecryptor();
-            byte[] result = decrypter.TransformFinalBlock(encryptedBlock, 0, 16);
-
-            aes.Dispose();
-
+                ICryptoTransform decrypter = aes.CreateDecryptor();
+                result = decrypter.TransformFinalBlock(encryptedBlock, 0, 16);
+            }
             return result;
         }
         
@@ -46,18 +46,18 @@ namespace SkanderNET
                 return unencryptedBlock;
 
             byte[] key = GenerateKey(sector0, blockIndex);
+            
+            byte[] result = null;
+            using (var aes = Aes.Create())
+            {
+                aes.Key = key;
+                aes.Mode = CipherMode.ECB;
+                aes.BlockSize = 128;
+                aes.Padding = PaddingMode.None;
 
-            Aes aes = Aes.Create();
-            aes.Key = key;
-            aes.Mode = CipherMode.ECB;
-            aes.BlockSize = 128;
-            aes.Padding = PaddingMode.None;
-
-            ICryptoTransform encrypter = aes.CreateEncryptor();
-            byte[] result = encrypter.TransformFinalBlock(unencryptedBlock, 0, 16);
-
-            aes.Dispose();
-
+                ICryptoTransform encrypter = aes.CreateEncryptor();
+                result = encrypter.TransformFinalBlock(unencryptedBlock, 0, 16);
+            }
             return result;
         }
 
@@ -67,9 +67,8 @@ namespace SkanderNET
             Buffer.BlockCopy(sector0, 0, buffer, 0, 0x20);
             buffer[0x20] = (byte)blockIndex;
             Buffer.BlockCopy(HashConst, 0, buffer, 0x21, HashConst.Length);
-            MD5 md5 = MD5.Create();
-            byte[] key = md5.ComputeHash(buffer);
-            md5.Dispose();
+            byte[] key = null;
+            using (var md5 = MD5.Create()) { key = md5.ComputeHash(buffer); }
             return key;
         }
     }

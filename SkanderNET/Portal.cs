@@ -3,23 +3,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using LibUsbDotNet;
-using LibUsbDotNet.LibUsb;
-using LibUsbDotNet.Main;
 
 namespace SkanderNET
 {
     public class Portal : IDisposable
     {
-        public readonly IUsbDevice Device;
-        private UsbContext usbContext;
-        private readonly UsbEndpointReader _reader;
+        public IntPtr Device;
+        private IntPtr _usbContext;
         private readonly Queue<byte[]> _writeQueue = new Queue<byte[]>();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly PortalSlot[] _slots = new PortalSlot[16];
         private bool _activated;
-        private readonly Task _workerTask;
+        private readonly Thread _workerThread;
+        private volatile bool _cancelRequested;
         /// <summary>
         /// Invoked when a Skylander is initially placed and its first sector containing character info is processed.
         /// </summary>
@@ -45,17 +40,17 @@ namespace SkanderNET
         /// </summary>
         public event Action<Exception> OnError;
 
-        internal Portal(IUsbDevice device, UsbContext context)
+        internal Portal(IntPtr device, IntPtr context)
         {
-            usbContext = context; // Hold to prevent disposal before device disposal
+            _usbContext = context; // Hold to prevent disposal before device disposal
             Device = device;
-            device.Open();
-            device.SetConfiguration(1);
-            device.ClaimInterface(0);
-            _reader = Device.OpenEndpointReader(ReadEndpointID.Ep01, 0x20, EndpointType.Interrupt);
+            LibUsb.libusb_set_configuration(Device, 1);
+            LibUsb.libusb_claim_interface(Device, 0);
             for (var i = 0; i < 0x10; i++)
                 _slots[i] = new PortalSlot { Index = i };
-            _workerTask = Task.Run(() => Work(_cts.Token));
+            _workerThread = new Thread(Work);
+            _workerThread.IsBackground = true;
+            _workerThread.Start();
         }
 
         /// <summary>
@@ -219,11 +214,11 @@ namespace SkanderNET
                 _writeQueue.Enqueue(buffer);
         }
 
-        private void Work(CancellationToken token)
+        private void Work()
         {
             var readBuffer = new byte[32];
 
-            while (!token.IsCancellationRequested)
+            while (!_cancelRequested)
             {
                 byte[] sendData = null;
                 lock (_writeQueue)
@@ -236,33 +231,37 @@ namespace SkanderNET
                 {
                     try
                     {
-                        var packet = new UsbSetupPacket(
+                        LibUsb.libusb_control_transfer(
+                            Device,
                             0x21,
                             0x09,
-                            0x0200, 
-                            0x0000, 
-                            sendData.Length
+                            0x0200,
+                            0x0000,
+                            sendData,
+                            (ushort)sendData.Length,
+                            1000
                         );
-                        Device.ControlTransfer(packet, sendData, 0, sendData.Length);
                     }
                     catch (Exception ex)
                     {
                         OnError?.Invoke(new PortalWriteException($"Failed to write to portal: {ex.Message}"));
                     }
                 }
-                
+
                 try
                 {
                     int bytesRead;
-                    var err = _reader.Transfer(readBuffer, 0, 0x20, 0, out bytesRead);
-                    if (err == Error.Success && bytesRead > 0)
+                    var result = LibUsb.libusb_interrupt_transfer(Device, 0x81, readBuffer, readBuffer.Length,
+                        out bytesRead, 10);
+                    if (result == 0 && bytesRead > 0)
                     {
                         var data = new byte[bytesRead];
                         Array.Copy(readBuffer, data, bytesRead);
                         ParseResponse(data);
                     }
-                    if (err == Error.Io)
-                        Dispose();
+
+                    if (result == -4 || result == -1)
+                        break;
                 }
                 catch (TimeoutException)
                 {
@@ -293,6 +292,8 @@ namespace SkanderNET
                 if (sendData == null)
                     Thread.Sleep(10);
             }
+            
+            CleanUp();
         }
         
         internal void SkylanderPlaced(int slotIndex, Skylander skylander)
@@ -331,16 +332,27 @@ namespace SkanderNET
             }
         }
 
+        private bool _disposed;
+
         /// <summary>
         /// Close the portal and clean up resources.
         /// </summary>
         public void Dispose()
         {
-            _cts?.Cancel();
-            Device.Close();
-            Device.Dispose();
-            usbContext.Dispose();
-            _cts?.Dispose();
+            if (_disposed) return;
+                _disposed = true;
+            _cancelRequested = true;
+            if (_workerThread != null && _workerThread.IsAlive)
+                _workerThread.Join();
+        }
+
+        private void CleanUp()
+        {
+            if (Device != IntPtr.Zero)
+            {
+                LibUsb.libusb_close(Device);
+                Device = IntPtr.Zero;
+            }
             PortalFinder.Reset();
         }
     }
