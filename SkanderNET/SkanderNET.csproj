@@ -8,6 +8,7 @@
         <LangVersion>6</LangVersion>
         <Authors>xMcacutt</Authors>
         <PackageTags>Skylanders</PackageTags>
+        <PackageIconUrl>https://raw.githubusercontent.com/xMcacutt/SkanderNET/refs/heads/master/Icon.png</PackageIconUrl>
         <Description>NetFramework4.6 and C# 6.0 compatible library for comunicating with the Skylanders portal.</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
