@@ -3,7 +3,7 @@
 A multiframework compatible library for connecting to Skylanders portals.
 ## Usage
 This library depends on libusb. You must manually provide this library. Be aware that bundling this library with libusb as
-a single library is not permitted as discussed in [Licensing]{#licensing}.
+a single library is not permitted as discussed in [Licensing](#licensing).
 
 Use the correct libusb dll for your build system and architecture and provide it as a dll with your library or application.
 Avoid statically linking against libusb when using SkanderNET.
