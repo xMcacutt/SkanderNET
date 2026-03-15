@@ -1,5 +1,6 @@
 ﻿# SkanderNET
-A NET Framework 4.6, C# 6.0 compatible library for connecting to Skylanders portals and interacting with figures.
+![](.\SocialImage.png)
+A NET Framework 4.6, C# 6.0 compatible library for connecting to Skylanders portals.
 ## Usage
 Before communicating with the portal and figures, the portal must first be discovered.
 This can be achieved with a simple loop. 
