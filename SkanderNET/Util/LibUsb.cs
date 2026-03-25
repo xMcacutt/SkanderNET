@@ -20,6 +20,9 @@ namespace SkanderNET
         public static extern int libusb_claim_interface(IntPtr device, int interface_number);
         
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libusb_release_interface(IntPtr device, int interface_number);
+        
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         public static extern int libusb_interrupt_transfer(IntPtr dev_handle, byte endpoint, byte[] data, int length, out int transferred, int timeout);
         
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]

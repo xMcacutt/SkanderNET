@@ -1,0 +1,80 @@
+﻿using System.Collections.Generic;
+
+namespace SkanderNET
+{
+    public enum TrinketType : byte
+    {
+        None = 0x0,
+        TBonesLuckyTie = 0x1,
+        BattersonsBubble = 0x2,
+        DarkWaterDaisy = 0x3,
+        VoteForCyclops = 0x4,
+        RasmesDragonHorn = 0x5,
+        IrisIris = 0x6,
+        KuckooKazoo = 0x7,
+        RamsesRune = 0x8,
+        UllyssesUniclops = 0x9,
+        BillyBison = 0xA,
+        StealthElfsGift = 0xB,
+        LizardLilly = 0xC,
+        PiratePinwheel = 0xD,
+        BubbleBlower = 0xE,
+        BlobbersMedalOfCourage = 0x10,
+        MedalOfValiance = 0x11,
+        MedalOfGallantry = 0x12,
+        MedalOfMettle = 0x13,
+        WingedMedalOfBravery = 0x14,
+        SeadogSeashell = 0x15,
+        SnucklesSunflower = 0x16,
+        TeddyCyclops = 0x17,
+        GooFactoryGear = 0x18,
+        ElementalOpal = 0x19,
+        ElementalRadiant = 0x1A,
+        ElementalDiamond = 0x1B,
+        CyclopsSpinner = 0x1C,
+        WilikinWindmill = 0x1D,
+        TimeTownTicker = 0x1E,
+        BigBowOfBoom = 0x1F,
+        MabusMedallion = 0x20,
+        SpyrosShield = 0x21,
+    }
+    
+    public static class TrinketIndex
+    { 
+        public static readonly Dictionary<TrinketType, string> Trinkets = new Dictionary<TrinketType, string>
+        {
+            { TrinketType.TBonesLuckyTie, "T-Bone's Lucky Tie"},
+            { TrinketType.BattersonsBubble, "Batterson's Bubble"},
+            { TrinketType.DarkWaterDaisy, "Dark Water Daisy"},
+            { TrinketType.VoteForCyclops, "Vote for Cyclops"},
+            { TrinketType.RasmesDragonHorn, "Ramses' Dragon Horn"},
+            { TrinketType.IrisIris, "Iris' Iris"},
+            { TrinketType.KuckooKazoo, "Kuckoo Kazoo"},
+            { TrinketType.RamsesRune, "Ramses' Rune"},
+            { TrinketType.UllyssesUniclops, "Ullysses Uniclops"},
+            { TrinketType.BillyBison, "Billy Bison"},
+            { TrinketType.StealthElfsGift, "Stealth Elf's Gift"},
+            { TrinketType.LizardLilly, "Lizard Lilly"},
+            { TrinketType.PiratePinwheel, "Pirate Pinwheel"},
+            { TrinketType.BubbleBlower, "Bubble Blower"},
+            { TrinketType.BlobbersMedalOfCourage, "Medal of Heroism"},
+            { TrinketType.MedalOfValiance, "Blobber's Medal of Courage"},
+            { TrinketType.MedalOfGallantry, "Medal of Valiance"},
+            { TrinketType.MedalOfMettle, "Medal of Gallantry"},
+            { TrinketType.WingedMedalOfBravery, "Medal of Mettle"},
+            { TrinketType.SeadogSeashell, "Winged Medal of Bravery"},
+            { TrinketType.SnucklesSunflower, "Seadog Seashell"},
+            { TrinketType.TeddyCyclops, "Snuckles' Sunflower"},
+            { TrinketType.GooFactoryGear, "Teddy Cyclops"},
+            { TrinketType.ElementalOpal, "Goo Factory Gear"},
+            { TrinketType.ElementalRadiant, "Elemental Opal"},
+            { TrinketType.ElementalDiamond, "Elemental Radiant"},
+            { TrinketType.CyclopsSpinner, "Elemental Diamond"},
+            { TrinketType.WilikinWindmill, "Cyclops Spinner"},
+            { TrinketType.TimeTownTicker, "Wilikin Windmill"},
+            { TrinketType.BigBowOfBoom, "Time Town Ticker"},
+            { TrinketType.MabusMedallion, "Big Bow of Boom"},
+            { TrinketType.SpyrosShield, "Mabu's Medallion"},
+        };
+    }
+}

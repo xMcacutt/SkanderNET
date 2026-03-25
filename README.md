@@ -25,6 +25,22 @@ This should be stored for communications.
 As long as the `PortalFinder` thread is running, any disconnected and reconnected portals will be re-detected.
 Only one portal may be active at a time.
 
+The `PortalFinder` also provides an OnError event for handling any errors finding portals.
+The most common error is a missing libusb-1.0.dll.
+This library is discussed in more detail later but you may need to invoke its loading with `Kernel32`
+```cs
+	[DllImport("kernel32")]
+	private static extern IntPtr LoadLibrary(string path);
+    
+    static void Main() 
+    {
+        LoadLibrary(
+			@"Path\To\libusb-1.0.dll"
+		);
+    }
+```
+This is left to you as the API consumer since the dll may be located in non-standard directories.
+
 The Portal object provides the following events for subscription:
 ```cs
 // Invoked when a Skylander is initially placed and its first sector containing character info is processed.
@@ -91,7 +107,26 @@ Figures can almost always be restored by navigating to the settings menu on Gian
 
 Usage of this tool for the purposes of piracy or violating the protections placed on the figures is not permitted.
 
-## Example
+### The Portal Sound Engine
+Trap Team portals have a built-in speaker. Sound can be sent to the speaker using one of the two following methods.
+
+By path
+```cs
+PortalSoundClip clip = portal.PlayAudio(@"Path\To\My\Sound.wav", volume: 0.5f);
+```
+or by raw data. (The PortalAudio class provides a static helper to load PCM data from a path though this is not necessary thanks to the above method.)
+```cs
+PortalSoundClip clip portal.PlayAudio(pcmData, sampleRate: 16000, volume: 0.5f);
+```
+The portal is designed to work with 16bit PCM. Sending non PCM or different bit rate packets will potentially fail though everything is downsampled anyway.
+
+The resulting object of a call to PlayAudio is a `PortalSoundClip`.
+When a call is made to PlayAudio, the sound is queued for playback. This may take some time since the queue must be cleared of other sounds first.
+As a result, if you must trigger some code off of either the start or end of a sound, you may subscribe to the events `clip.OnStarted` or `clip.OnFinished` immediately after queuing the playback.
+
+If you wish to interrupt playback, you may call either `clip.Stop()` or to clear all sound `portal.ClearAudio()`
+
+## Full Example
 ```cs
 using System;
 using System.Drawing;

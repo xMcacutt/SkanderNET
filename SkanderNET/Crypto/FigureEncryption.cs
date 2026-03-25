@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace SkanderNET
 {
-    public static class SkylanderEncryption
+    public static class FigureEncryption
     {
         private static readonly byte[] HashConst =
         {

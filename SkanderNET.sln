@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkanderNET", "SkanderNET\SkanderNET.csproj", "{5B68F277-C5FF-4243-8AAE-4728ABDEF1F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProj", "TestProj\TestProj.csproj", "{BE3EA6DE-A957-4ADC-B792-3EBDF403C959}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{5B68F277-C5FF-4243-8AAE-4728ABDEF1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B68F277-C5FF-4243-8AAE-4728ABDEF1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B68F277-C5FF-4243-8AAE-4728ABDEF1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE3EA6DE-A957-4ADC-B792-3EBDF403C959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE3EA6DE-A957-4ADC-B792-3EBDF403C959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE3EA6DE-A957-4ADC-B792-3EBDF403C959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE3EA6DE-A957-4ADC-B792-3EBDF403C959}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
