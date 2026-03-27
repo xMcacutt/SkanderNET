@@ -147,19 +147,9 @@ namespace SkanderNET
     
     internal class VehicleFigure : Figure
     {
-        internal VehicleFigure(FigureSession session, TagHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
+        internal VehicleFigure(FigureSession session, ToyHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
         {
             
-        }
-
-        private void Parse()
-        {
-            
-        }
-
-        public override void Save()
-        {
-            throw new NotImplementedException();
         }
     }
 }

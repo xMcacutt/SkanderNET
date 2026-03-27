@@ -2,7 +2,7 @@
 
 namespace SkanderNET
 {
-    public enum VillainType : ushort
+    public enum VillainType : byte
     {
         None = 0,
         ChompyMage = 1,
@@ -53,7 +53,7 @@ namespace SkanderNET
         EyeScream = 46,
     }
     
-    internal class VillainMetaData
+    public class VillainMetaData
     {
         public readonly string Name;
         public readonly Element Element;
@@ -65,10 +65,11 @@ namespace SkanderNET
         }
     }
     
-    internal static class VillainIndex
+    public static class VillainIndex
     {
-        internal static readonly Dictionary<VillainType, VillainMetaData> Villains = new Dictionary<VillainType, VillainMetaData>
+        public static readonly Dictionary<VillainType, VillainMetaData> Villains = new Dictionary<VillainType, VillainMetaData>
         {
+            { VillainType.None, new VillainMetaData("None", Element.None) },
             { VillainType.ChompyMage, new VillainMetaData("Chompy Mage", Element.Life) },
             { VillainType.Krankcase, new VillainMetaData("Dr. Krankcase", Element.Tech) },
             { VillainType.Wolfgang, new VillainMetaData("Wolfgang", Element.Undead) },

@@ -8,7 +8,7 @@ using System.Text;
 namespace SkanderNET
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct SkylanderData
+    public unsafe struct Skylander
     {
         private UInt24 _experience2011; // max 33000
         internal ushort Money;
@@ -23,7 +23,7 @@ namespace SkanderNET
         internal byte RegionCountId;
         private Platform2013 Platforms2013;
         internal ulong OwnerId;
-        internal fixed byte RawNickname[0x20];
+        private fixed byte _nickname[0x20];
         private byte _lastPlacedMinute;
         private byte _lastPlacedHour;
         private byte _lastPlacedDay;
@@ -67,7 +67,7 @@ namespace SkanderNET
             get
             {
                 var bytes = new byte[0x20];
-                fixed (byte* ptr = RawNickname)
+                fixed (byte* ptr = _nickname)
                     Marshal.Copy((IntPtr)ptr, bytes, 0, 0x20);
                 var str = Encoding.Unicode.GetString(bytes, 0, 30).Trim();
                 if (str.Any(c => !char.IsLetterOrDigit(c) && !char.IsPunctuation(c) && !char.IsWhiteSpace(c) && c != 0x0) || str.All(c => char.IsWhiteSpace(c) || c == 0x0))
@@ -82,8 +82,9 @@ namespace SkanderNET
             {
                 var bytes = new byte[0x20];
                 var encoded = Encoding.Unicode.GetBytes(value ?? "");
-                Array.Copy(encoded, bytes, 0x20);
-                fixed (byte* ptr = RawNickname)
+                var length = Math.Min(encoded.Length, 0x1F);
+                Array.Copy(encoded, bytes, length);
+                fixed (byte* ptr = _nickname)
                 {
                     for (var i = 0; i < 0x20; i++)
                         ptr[i] = bytes[i];
@@ -417,16 +418,16 @@ namespace SkanderNET
         }
     }
 
-    public class FigureSkylander : Figure
+    public class SkylanderFigure : Figure
     {
-        private SkylanderData _data;
+        private Skylander _data;
         private Portal _portal;
         
         
-        internal FigureSkylander(FigureSession session, TagHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
+        internal SkylanderFigure(FigureSession session, ToyHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
         {
             _portal = session.Portal;
-            _data = Utils.ByteArrayToStruct<SkylanderData>(RawData);
+            _data = Utils.ByteArrayToStruct<Skylander>(RawData);
         }
         
         private void SyncData()
@@ -456,7 +457,7 @@ namespace SkanderNET
             return true;
         }
         
-        public override void Save()
+        public void Save()
         {
             _data.AreaSequenceValue1++;
             _data.AreaSequenceValue2++;
@@ -471,6 +472,43 @@ namespace SkanderNET
             Session.MarkForFormat();
         }
 
+        internal static bool Verify(List<DataArea> dataAreas, List<DataArea> extendedDataAreas)
+        {
+            for (var i = 0; i < dataAreas.Count; i++)
+            {
+                var dataArea = dataAreas[i];   
+                var crc1Area = dataArea.Data.Skip(0x30).Take(0x30).Concat(new byte[0xE0]).ToArray();
+                var crc2Area = dataArea.Data.Take(0x30).ToArray();
+                var calculatedCrc1 = CRC16_IBM3740.Generate(crc1Area);
+                var calculatedCrc2 = CRC16_IBM3740.Generate(crc2Area);
+                var crc1 = BitConverter.ToUInt16(dataArea.Header, 0xA);
+                var crc2 = BitConverter.ToUInt16(dataArea.Header, 0xC);
+                var headerBlock = new byte[0x10];
+                Buffer.BlockCopy(dataArea.Header, 0x0, headerBlock, 0x0, 0x10);
+                headerBlock[0xE] = 0x05;
+                headerBlock[0xF] = 0x00;
+                var calculatedCrc3 = CRC16_IBM3740.Generate(headerBlock);
+                var crc3 = BitConverter.ToUInt16(dataArea.Header, 0xE);
+                if (calculatedCrc1 != crc1 || calculatedCrc2 != crc2 || calculatedCrc3 != crc3)
+                    dataArea.IsValid = false;
+                else
+                    dataArea.IsValid = true;
+            }
+
+            for (var i = 0; i < extendedDataAreas.Count; i++)
+            {
+                var dataArea = extendedDataAreas[i];
+                var crcArea = dataArea.Header.Concat(dataArea.Data).ToArray();
+                crcArea[0x0] = 0x6;
+                crcArea[0x1] = 0x1;
+                var calculatedCrc = CRC16_IBM3740.Generate(crcArea);
+                var crc = BitConverter.ToUInt16(dataArea.Header, 0x0);
+                dataArea.IsValid = calculatedCrc == crc;
+            }
+
+            return dataAreas.Any(x => x.IsValid) && (!extendedDataAreas.Any() || extendedDataAreas.Any(x => x.IsValid));
+        }
+        
         internal static void Format(byte[] rawFigure)
         {
             var block = new byte[0x30];

@@ -97,13 +97,8 @@ namespace SkanderNET
     
     internal class CreationCrystalFigure : Figure
     {
-        internal CreationCrystalFigure(FigureSession session, TagHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
+        internal CreationCrystalFigure(FigureSession session, ToyHeader header, ToyMetaData metaData, byte[] rawData) : base(session, header, metaData, rawData)
         {
-        }
-
-        public override void Save()
-        {
-            throw new NotImplementedException();
         }
     }
 }

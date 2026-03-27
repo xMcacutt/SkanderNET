@@ -43,6 +43,7 @@ namespace SkanderNET
     { 
         public static readonly Dictionary<TrinketType, string> Trinkets = new Dictionary<TrinketType, string>
         {
+            { TrinketType.None, "None"},
             { TrinketType.TBonesLuckyTie, "T-Bone's Lucky Tie"},
             { TrinketType.BattersonsBubble, "Batterson's Bubble"},
             { TrinketType.DarkWaterDaisy, "Dark Water Daisy"},

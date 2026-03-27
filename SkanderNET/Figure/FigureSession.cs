@@ -29,12 +29,12 @@ namespace SkanderNET
         private bool _hasExtendedDataArea = false;
         internal readonly Portal Portal;
         private readonly int _slotIndex;
-        private TagHeader _header;
+        private ToyHeader _header;
         private readonly byte[] _rawFigure = new byte[0x400];
         private readonly byte[] _rawTag = new byte[0x20];
         private List<DataArea> _dataAreas = new List<DataArea>();
         private List<DataArea> _extendedDataAreas = new List<DataArea>();
-        private readonly byte[] _rawData = new byte[0xB0];
+        private readonly byte[] _rawData = new byte[0x150];
         
         internal FigureSession(Portal portal, int slotIndex)
         {
@@ -45,45 +45,47 @@ namespace SkanderNET
         internal void HandleBlock(uint blockIndex, byte[] data)
         {
             Buffer.BlockCopy(data, 0, _rawFigure, (int)blockIndex * 0x10, 0x10);
-            if (blockIndex != 0x3F)
-                Portal.SendQuery(_slotIndex, blockIndex + 1);
-            else
+            if (blockIndex == 0x1)
             {
                 Buffer.BlockCopy(_rawFigure, 0x0, _rawTag, 0x0, 0x20);
-                _header = Utils.ByteArrayToStruct<TagHeader>(_rawTag);
+                _header = Utils.ByteArrayToStruct<ToyHeader>(_rawTag);
                 ToyMetaData metaData;
                 if (!ToyIndex.Toys.TryGetValue(_header.ToyTypeId, out metaData))
                 {
                     Portal.Error(new UnknownToyException($"Unsupported toy with id {_header.ToyTypeId}"));
                     return;
                 }
-
-                if (metaData.Type == ToyType.Skylander)
+                if (metaData.Type == ToyType.AdventurePack || metaData.Type == ToyType.MagicItem)
                 {
-                    var block = new byte[16];
-                    int[] headerOffsets = { 0x80, 0x240, 0x110, 0x2d0 };
-                    var allSegmentsZero = true;
-                    foreach (var offset in headerOffsets)
-                    {
-                        Buffer.BlockCopy(_rawFigure, offset, block, 0, 16);
-                        if (block.All(b => b == 0x0)) continue;
-                        allSegmentsZero = false;
-                        break;
-                    }
-                    if (allSegmentsZero) _markedForFormat = true;
+                    var figure = this.CreateFigure(_header, _rawFigure);
+                    Portal.FigurePlaced(_slotIndex, figure);
+                    Portal.FigureProcessed(_slotIndex, figure);
+                    return;
                 }
+                var placeholderFigure = new Figure(this, _header, metaData, null);
+                Portal.SetFigure(_slotIndex, placeholderFigure);
+                Portal.FigurePlaced(_slotIndex, placeholderFigure);
+            }
+            if (blockIndex != 0x3F)
+                Portal.SendQuery(_slotIndex, blockIndex + 1);
+            else
+            {
+                ToyMetaData metaData;
+                if (!ToyIndex.Toys.TryGetValue(_header.ToyTypeId, out metaData))
+                    return;
+                PreDecryptVerify(metaData);
                 DecryptData();
 #if DEBUG
-                File.WriteAllBytes($"./{_header.SerialNumber}", _rawFigure);
+                DumpFigure($"./{metaData.Name}");
 #endif
-                if (metaData.Type != ToyType.Crystal && metaData.Type != ToyType.Trap)
-                    _hasExtendedDataArea = true;
                 SeparateData();
-                if (!VerifyData() || _markedForFormat)
+                if (!VerifyData(metaData.Type) || _markedForFormat)
                 {
-                    if (metaData.Type == ToyType.AdventurePack || metaData.Type == ToyType.MagicItem || !FormatData(metaData))
+                    if (!FormatData(metaData))
                     {
-                        Portal.Error(new UnfixableCorruptionException("The toy cannot be formatted with this tool. Load into Giants and attempt to reset broken toys from the general settings menu on the main menu."));
+                        Portal.Error(new UnfixableCorruptionException(
+                            "The toy cannot be formatted with this tool.\n" +
+                            "Load any game (Giants or later) and reset broken toys from general settings on the main menu."));
                         return;
                     }
                     Console.WriteLine("Format completed");
@@ -92,8 +94,26 @@ namespace SkanderNET
                 CompileRawData();
                 var figure = this.CreateFigure(_header, _rawData);
                 Portal.SetFigure(_slotIndex, figure);
-                Portal.FigurePlaced(_slotIndex, figure);
+                Portal.FigureProcessed(_slotIndex, figure);
             }
+        }
+
+        private void PreDecryptVerify(ToyMetaData metaData)
+        {
+            if (metaData.Type != ToyType.Crystal && metaData.Type != ToyType.Trap)
+                _hasExtendedDataArea = true;
+            var headerOffsets = _hasExtendedDataArea ? new [] { 0x80, 0x240, 0x110, 0x2d0 } : new [] { 0x80, 0x240 };
+            var block = new byte[16];
+            var allSegmentsZero = headerOffsets.Length != 0;
+            foreach (var offset in headerOffsets)
+            {
+                Buffer.BlockCopy(_rawFigure, offset, block, 0, 16);
+                if (block.All(b => b == 0x0)) continue;
+                allSegmentsZero = false;
+                break;
+            }
+            if (allSegmentsZero) 
+                _markedForFormat = true;
         }
 
         internal void MarkForFormat()
@@ -114,9 +134,13 @@ namespace SkanderNET
             switch (metaData.Type)
             {
                 case ToyType.Skylander:
-                    FigureSkylander.Format(_rawFigure);;
+                    SkylanderFigure.Format(_rawFigure);;
                     SeparateData();
-                    return VerifyData();
+                    return VerifyData(metaData.Type);
+                case ToyType.Trap:
+                    TrapFigure.Format(_rawFigure);;
+                    SeparateData();
+                    return VerifyData(metaData.Type);
             }
             return false;
         }
@@ -162,7 +186,7 @@ namespace SkanderNET
                 var seq2 = _extendedDataAreas[1].Header[0x2];
                 _activeExtendedArea = ((seq1 - seq2) & 0xFF) < 0x80 ? 0 : 1;
             }
-            else
+            else if (_extendedDataAreas.Any())
             {
                 if (_extendedDataAreas[0].IsValid)
                     _activeExtendedArea = 0;
@@ -224,60 +248,43 @@ namespace SkanderNET
             {
                 var dataArea1Header = new byte[0x10];
                 Buffer.BlockCopy(_rawFigure, 0x80, dataArea1Header, 0x0, 0x10);
-                var dataArea1 = new byte[0xA0];
+                var dataArea1 = new byte[0x140];
                 Buffer.BlockCopy(_rawFigure, 0x80 + 0x10, dataArea1, 0x0, 0x20);
                 Buffer.BlockCopy(_rawFigure, 0x80 + 0x40, dataArea1, 0x20, 0x30);
                 Buffer.BlockCopy(_rawFigure, 0x80 + 0x80, dataArea1, 0x50, 0x30);
-                Buffer.BlockCopy(_rawFigure, 0x80 + 0xC0, dataArea1, 0x80, 0x20);
+                Buffer.BlockCopy(_rawFigure, 0x80 + 0xC0, dataArea1, 0x80, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x80 + 0x100, dataArea1, 0xB0, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x80 + 0x140, dataArea1, 0xE0, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x80 + 0x180, dataArea1, 0x110, 0x30);
+                
                 
                 var dataArea2Header = new byte[0x10];
                 Buffer.BlockCopy(_rawFigure, 0x240, dataArea2Header, 0x0, 0x10);
-                var dataArea2 = new byte[0xA0];
+                var dataArea2 = new byte[0x140];
                 Buffer.BlockCopy(_rawFigure, 0x240 + 0x10, dataArea2, 0x0, 0x20);
                 Buffer.BlockCopy(_rawFigure, 0x240 + 0x40, dataArea2, 0x20, 0x30);
                 Buffer.BlockCopy(_rawFigure, 0x240 + 0x80, dataArea2, 0x50, 0x30);
-                Buffer.BlockCopy(_rawFigure, 0x240 + 0xC0, dataArea2, 0x80, 0x20);
+                Buffer.BlockCopy(_rawFigure, 0x240 + 0xC0, dataArea2, 0x80, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x240 + 0x100, dataArea2, 0xB0, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x240 + 0x140, dataArea2, 0xE0, 0x30);
+                Buffer.BlockCopy(_rawFigure, 0x240 + 0x180, dataArea2, 0x110, 0x30);
                 
                 _dataAreas.Add(new DataArea(dataArea1Header, dataArea1));
                 _dataAreas.Add(new DataArea(dataArea2Header, dataArea2));
             }
         }
 
-        private bool VerifyData()
+        private bool VerifyData(ToyType type)
         {
-            for (var i = 0; i < _dataAreas.Count; i++)
-            {
-                var dataArea = _dataAreas[i];   
-                var crc1Area = dataArea.Data.Skip(0x30).Take(0x30).Concat(new byte[0xE0]).ToArray();
-                var crc2Area = dataArea.Data.Take(0x30).ToArray();
-                var calculatedCrc1 = CRC16_IBM3740.Generate(crc1Area);
-                var calculatedCrc2 = CRC16_IBM3740.Generate(crc2Area);
-                var crc1 = BitConverter.ToUInt16(dataArea.Header, 0xA);
-                var crc2 = BitConverter.ToUInt16(dataArea.Header, 0xC);
-                var headerBlock = new byte[0x10];
-                Buffer.BlockCopy(dataArea.Header, 0x0, headerBlock, 0x0, 0x10);
-                headerBlock[0xE] = 0x05;
-                headerBlock[0xF] = 0x00;
-                var calculatedCrc3 = CRC16_IBM3740.Generate(headerBlock);
-                var crc3 = BitConverter.ToUInt16(dataArea.Header, 0xE);
-                if (calculatedCrc1 != crc1 || calculatedCrc2 != crc2 || calculatedCrc3 != crc3)
-                    dataArea.IsValid = false;
-                else
-                    dataArea.IsValid = true;
-            }
-
-            for (var i = 0; i < _extendedDataAreas.Count; i++)
-            {
-                var dataArea = _extendedDataAreas[i];
-                var crcArea = dataArea.Header.Concat(dataArea.Data).ToArray();
-                crcArea[0x0] = 0x6;
-                crcArea[0x1] = 0x1;
-                var calculatedCrc = CRC16_IBM3740.Generate(crcArea);
-                var crc = BitConverter.ToUInt16(dataArea.Header, 0x0);
-                dataArea.IsValid = calculatedCrc == crc;
-            }
-
-            return _dataAreas.Any(x => x.IsValid) && (!_extendedDataAreas.Any() || _extendedDataAreas.Any(x => x.IsValid));
+            if (type == ToyType.AdventurePack)
+                return true;
+            if (type == ToyType.MagicItem)
+                return true;
+            if (type == ToyType.Skylander)
+                return SkylanderFigure.Verify(_dataAreas, _extendedDataAreas);
+            if (type == ToyType.Trap)
+                return TrapFigure.Verify(_dataAreas);
+            return false;
         }
         
         internal void SaveFigure(Figure figure, byte[] rawData)
@@ -321,14 +328,14 @@ namespace SkanderNET
             {
                 var startingBlock = _activeArea == 0 ? 0x24 : 0x8;
                 var localBlockIndex = 1;
-                for (var blockIndex = 0; blockIndex < 0xD; blockIndex++)
+                for (var blockIndex = 0; blockIndex < 0x1A; blockIndex++)
                 {
                     if ((startingBlock + blockIndex - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, localBlockIndex * 0x10, block, 0x0, 0x10);
                     localBlockIndex++;
-                    block = FigureEncryption.EncryptBlock(_rawTag, (uint)(startingBlock + blockIndex), block);
-                    Portal.SendWrite(_slotIndex, (uint)(startingBlock + blockIndex), block);
+                    block = FigureEncryption.EncryptBlock(_rawTag, (uint)(startingBlock + blockIndex + 1), block);
+                    Portal.SendWrite(_slotIndex, (uint)(startingBlock + blockIndex + 1), block);
                 }
                 Buffer.BlockCopy(rawData, 0x0, block, 0x0, 0x10);
                 block = FigureEncryption.EncryptBlock(_rawTag, (uint)startingBlock, block);
@@ -336,6 +343,11 @@ namespace SkanderNET
                 _activeArea = _activeArea == 0 ? 1 : 0;
             }
             Portal.FigureSaved(_slotIndex, figure);
+        }
+
+        internal void DumpFigure(string filePath)
+        {
+            File.WriteAllBytes(filePath, _rawFigure);
         }
     }
 }

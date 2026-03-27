@@ -4,7 +4,7 @@ namespace SkanderNET
 {
     internal static class FigureFactory
     {
-        internal static Figure CreateFigure(this FigureSession session, TagHeader header, byte[] rawFigure)
+        internal static Figure CreateFigure(this FigureSession session, ToyHeader header, byte[] rawFigure)
         {
             ToyMetaData metaData;
             if (!ToyIndex.Toys.TryGetValue(header.ToyTypeId, out metaData))
@@ -12,7 +12,7 @@ namespace SkanderNET
             switch (metaData.Type)
             {
                 case ToyType.Skylander:
-                    return new FigureSkylander(session, header, metaData, rawFigure);
+                    return new SkylanderFigure(session, header, metaData, rawFigure);
                 case ToyType.AdventurePack:
                     break;
                 case ToyType.Crystal:

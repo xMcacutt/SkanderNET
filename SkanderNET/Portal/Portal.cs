@@ -20,11 +20,15 @@ namespace SkanderNET
         private volatile bool _cancelRequested;
         
         /// <summary>
-        /// Invoked when a Skylander is initially placed and its first sector containing character info is processed.
+        /// Invoked when a figure is initially placed and its first sector containing character info is processed.
         /// </summary>
         public event Action<int, Figure> OnFigurePlaced;
         /// <summary>
-        /// Invoked when a Skylander is removed from the portal.
+        /// Invoked when a figure has fully loaded.
+        /// </summary>
+        public event Action<int, Figure> OnFigureProcessed;
+        /// <summary>
+        /// Invoked when a figure is removed from the portal.
         /// </summary>
         public event Action<int, Figure> OnFigureRemoved;
         /// <summary>
@@ -401,6 +405,12 @@ namespace SkanderNET
         internal void FigurePlaced(int slotIndex, Figure figure)
         {
             var handler = OnFigurePlaced;
+            SafeInvoke(handler, slotIndex, figure);
+        }
+        
+        internal void FigureProcessed(int slotIndex, Figure figure)
+        {
+            var handler = OnFigureProcessed;
             SafeInvoke(handler, slotIndex, figure);
         }
         
