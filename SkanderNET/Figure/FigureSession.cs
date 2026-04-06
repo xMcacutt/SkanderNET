@@ -20,7 +20,7 @@ namespace SkanderNET
         }
     }
     
-    internal class FigureSession
+    public class FigureSession
     {
         private int _activeArea;
         private int _activeExtendedArea;
@@ -35,11 +35,14 @@ namespace SkanderNET
         private List<DataArea> _dataAreas = new List<DataArea>();
         private List<DataArea> _extendedDataAreas = new List<DataArea>();
         private readonly byte[] _rawData = new byte[0x150];
+        private readonly FileStream _fileStream;
+        private bool IsFileBased => _fileStream != null;
         
-        internal FigureSession(Portal portal, int slotIndex)
+        internal FigureSession(Portal portal, int slotIndex, FileStream fileStream = null)
         {
             Portal = portal;
             _slotIndex = slotIndex;
+            _fileStream = fileStream;
         }
 
         internal void HandleBlock(uint blockIndex, byte[] data)
@@ -50,9 +53,9 @@ namespace SkanderNET
                 Buffer.BlockCopy(_rawFigure, 0x0, _rawTag, 0x0, 0x20);
                 _header = Utils.ByteArrayToStruct<ToyHeader>(_rawTag);
                 ToyMetaData metaData;
-                if (!ToyIndex.Toys.TryGetValue(_header.ToyTypeId, out metaData))
+                if (!ToyIndex.Toys.TryGetValue(_header.Toy, out metaData))
                 {
-                    Portal.Error(new UnknownToyException($"Unsupported toy with id {_header.ToyTypeId}"));
+                    Portal.Error(new UnknownToyException($"Unsupported toy with id {(int)_header.Toy:X}"));
                     return;
                 }
                 if (metaData.Type == ToyType.AdventurePack || metaData.Type == ToyType.MagicItem)
@@ -70,37 +73,54 @@ namespace SkanderNET
                 Portal.SendQuery(_slotIndex, blockIndex + 1);
             else
             {
-                ToyMetaData metaData;
-                if (!ToyIndex.Toys.TryGetValue(_header.ToyTypeId, out metaData))
-                    return;
-                PreDecryptVerify(metaData);
-                DecryptData();
-#if DEBUG
-                DumpFigure($"./{metaData.Name}");
-#endif
-                SeparateData();
-                if (!VerifyData(metaData.Type) || _markedForFormat)
-                {
-                    if (!FormatData(metaData))
-                    {
-                        Portal.Error(new UnfixableCorruptionException(
-                            "The toy cannot be formatted with this tool.\n" +
-                            "Load any game (Giants or later) and reset broken toys from general settings on the main menu."));
-                        return;
-                    }
-                    Console.WriteLine("Format completed");
-                }
-                DetermineActiveArea();
-                CompileRawData();
-                var figure = this.CreateFigure(_header, _rawData);
+                var figure = ProcessData();
                 Portal.SetFigure(_slotIndex, figure);
                 Portal.FigureProcessed(_slotIndex, figure);
             }
         }
 
+        public static Figure LoadFromFile(FileStream fileStream)
+        {
+            var tempSession = new FigureSession(null, 0, fileStream);
+            if (fileStream.Length != 0x400)
+                return null;
+            fileStream.Read(tempSession._rawFigure, 0, 0x400);
+            Buffer.BlockCopy(tempSession._rawFigure, 0x0, tempSession._rawTag, 0x0, 0x20);
+            tempSession._header = Utils.ByteArrayToStruct<ToyHeader>(tempSession._rawTag);
+            return tempSession.ProcessData();
+        }
+
+        private Figure ProcessData()
+        {
+            ToyMetaData metaData;
+            if (!ToyIndex.Toys.TryGetValue(_header.Toy, out metaData))
+                return null;
+            PreDecryptVerify(metaData);
+            DecryptData();
+#if DEBUG
+            DumpFigure($"./{metaData.Name}"); // TODO remove this before release
+#endif
+            SeparateData();
+            if (!VerifyData(metaData.Type) || _markedForFormat)
+            {
+                if (!FormatData(metaData))
+                {
+                    Portal?.Error(new UnfixableCorruptionException(
+                        "The toy cannot be formatted with this tool.\n" +
+                        "Load any game (Giants or later) and reset broken toys from general settings on the main menu."));
+                    Portal?.FigureProcessed(_slotIndex, this.CreateFigure(_header, _rawData));
+                    return null;
+                }
+                Console.WriteLine("Format completed");
+            }
+            DetermineActiveArea();
+            CompileRawData();
+            return this.CreateFigure(_header, _rawData);
+        }
+
         private void PreDecryptVerify(ToyMetaData metaData)
         {
-            if (metaData.Type != ToyType.Crystal && metaData.Type != ToyType.Trap)
+            if (metaData.Type == ToyType.Vehicle || metaData.Type == ToyType.Skylander || metaData.Type == ToyType.RacingPack)
                 _hasExtendedDataArea = true;
             var headerOffsets = _hasExtendedDataArea ? new [] { 0x80, 0x240, 0x110, 0x2d0 } : new [] { 0x80, 0x240 };
             var block = new byte[16];
@@ -139,6 +159,18 @@ namespace SkanderNET
                     return VerifyData(metaData.Type);
                 case ToyType.Trap:
                     TrapFigure.Format(_rawFigure);;
+                    SeparateData();
+                    return VerifyData(metaData.Type);
+                case ToyType.Vehicle:
+                    VehicleFigure.Format(_rawFigure);;
+                    SeparateData();
+                    return VerifyData(metaData.Type);
+                case ToyType.RacingPack:
+                    RacePackFigure.Format(_rawFigure);
+                    SeparateData();
+                    return VerifyData(metaData.Type);
+                case ToyType.Crystal:
+                    CreationCrystalFigure.Format(_rawFigure);
                     SeparateData();
                     return VerifyData(metaData.Type);
             }
@@ -276,15 +308,24 @@ namespace SkanderNET
 
         private bool VerifyData(ToyType type)
         {
-            if (type == ToyType.AdventurePack)
-                return true;
-            if (type == ToyType.MagicItem)
-                return true;
-            if (type == ToyType.Skylander)
-                return SkylanderFigure.Verify(_dataAreas, _extendedDataAreas);
-            if (type == ToyType.Trap)
-                return TrapFigure.Verify(_dataAreas);
-            return false;
+            switch (type)
+            {
+                case ToyType.AdventurePack:
+                case ToyType.MagicItem:
+                    return true;
+                case ToyType.Skylander:
+                    return SkylanderFigure.Verify(_dataAreas, _extendedDataAreas);
+                case ToyType.Trap:
+                    return TrapFigure.Verify(_dataAreas);
+                case ToyType.Crystal:
+                    return CreationCrystalFigure.Verify(_dataAreas);
+                case ToyType.Vehicle:
+                    return VehicleFigure.Verify(_dataAreas, _extendedDataAreas);
+                case ToyType.RacingPack:
+                    return RacePackFigure.Verify(_dataAreas, _extendedDataAreas);
+                default:
+                    return false;
+            }
         }
         
         internal void SaveFigure(Figure figure, byte[] rawData)
@@ -296,7 +337,7 @@ namespace SkanderNET
                 var localBlockIndex = 1;
                 for (var blockIndex = 0; blockIndex < 0x8; blockIndex++)
                 {
-                    if ((startingBlock + blockIndex - 3) % 4 == 0)
+                    if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, localBlockIndex * 0x10, block, 0x0, 0x10);
                     localBlockIndex++;
@@ -312,7 +353,7 @@ namespace SkanderNET
                 startingBlock = _activeExtendedArea == 0 ? 0x2d : 0x11;
                 for (var blockIndex = 0; blockIndex < 0x4; blockIndex++)
                 {
-                    if ((startingBlock + blockIndex - 3) % 4 == 0)
+                    if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, 0x70 + localBlockIndex * 0x10, block, 0x0, 0x10);
                     localBlockIndex++;
@@ -330,7 +371,7 @@ namespace SkanderNET
                 var localBlockIndex = 1;
                 for (var blockIndex = 0; blockIndex < 0x1A; blockIndex++)
                 {
-                    if ((startingBlock + blockIndex - 3) % 4 == 0)
+                    if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, localBlockIndex * 0x10, block, 0x0, 0x10);
                     localBlockIndex++;
@@ -348,6 +389,28 @@ namespace SkanderNET
         internal void DumpFigure(string filePath)
         {
             File.WriteAllBytes(filePath, _rawFigure);
+        }
+
+        public void ForceWriteBlockDirect(uint blockIndex, byte[] block)
+        {
+            Portal.SendWrite(_slotIndex, blockIndex, block);
+        }
+        
+        public void ForceWriteBlock(uint blockIndex, byte[] block)
+        {
+            block = FigureEncryption.EncryptBlock(_rawTag, blockIndex, block);
+            Portal.SendWrite(_slotIndex, blockIndex, block);
+        }
+
+        private void WriteToFigure(uint blockIndex, byte[] block)
+        {
+            if (IsFileBased)
+            {
+                _fileStream.Seek(0x10 * blockIndex, SeekOrigin.Begin);
+                _fileStream.Write(block, 0, block.Length);
+            }
+            else
+                Portal.SendWrite(_slotIndex, blockIndex, block);
         }
     }
 }

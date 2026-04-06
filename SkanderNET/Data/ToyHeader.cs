@@ -16,9 +16,9 @@ namespace SkanderNET
         private ushort _variantId;
         private ushort crc16Type0;
         
-        public uint SerialNumber => _serialNumber;
-        public ushort ToyTypeId => _toyTypeId;
-        public ushort VariantId => _variantId;
-        public ulong TradingCardId => _tradingCardId;
+        internal uint SerialNumber => _serialNumber;
+        internal Toy Toy => (Toy)_toyTypeId;
+        internal ushort VariantId => _variantId;
+        internal ulong TradingCardId => _tradingCardId;
     }
 }

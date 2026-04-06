@@ -1,7 +1,11 @@
 ﻿# SkanderNET
 ![](./SocialImage.png)
 A multiframework compatible library for connecting to Skylanders portals.
+
+---
+
 ## Usage
+
 This library depends on libusb. You must manually provide this library. Be aware that bundling this library with libusb as
 a single library is not permitted as discussed in [Licensing](#licensing).
 
@@ -43,19 +47,19 @@ This is left to you as the API consumer since the dll may be located in non-stan
 
 The Portal object provides the following events for subscription:
 ```cs
-// Invoked when a Skylander is initially placed and its first sector containing character info is processed.
-public event Action<int, Skylander> OnSkylanderPlaced;
+// Invoked when a figure is initially placed and its first sector containing character info is processed.
+public event Action<int, Figure> OnFigurePlaced;
 
-// Invoked once the active data area is fully parsed and data can be read/written.
-public event Action<int, Skylander> OnSkylanderProcessed;
+// Invoked once the figure is fully parsed and data can be read/written.
+public event Action<int, Figure> OnFigureProcessed;
 
-// Invoked when a Skylander is removed from the portal.
-public event Action<int, Skylander> OnSkylanderRemoved;
+// Invoked when a figure is removed from the portal.
+public event Action<int, Figure> OnFigureRemoved;
 
-// Invoked when Save is called on a Skylander.
-public event Action<int, Skylander> OnSkylanderSaved;
+// Invoked when Save is called on a figure.
+public event Action<int, Figure> OnFigureSaved;
 
-// Invoked when the portal is activated and ready to being receiving queries.
+// Invoked when the portal is activated and ready to receive queries.
 public event Action OnReady;
 
 // Invoked when the portal throws an exception.
@@ -67,37 +71,145 @@ portal.Activate();
 ```
 To initialize the portal and allow it to start sending messages back and forth.
 
-When a Skylander is placed on the portal and once the first few blocks of data are received, portal will invoke 
-`OnSkylanderPlaced` with a Skylander object and its virtual slot index.
+When a figure is placed on the portal and once the first few blocks of data are received, portal will invoke 
+`OnFigurePlaced` with a `Figure` object and its virtual slot index.
 
-The Skylander, at this point, only has some of its data initialized and attempting to access other data will result
-in a `SkylanderNotLoadedException`. 
+The figure, at this point, only has some of its data initialized. 
+The object returned is therefore of the `Figure` base type which contains information about the toy type, toy name, serial number, trading card id, and various other elements.
 
-The skylander's metadata may be accessed upon being placed. For example:
 ```cs
-portal.OnSkylanderPlaced += (slot, skylander) =>
+portal.OnFigurePlaced += (slot, figure) =>
 {
-    SkylanderGenericData genericData;
-    if (!skylander.TryGetMetaData(out genericData))
-        return;
-    Console.WriteLine($"{skylander.Name} was placed.");
-};
-```
-Once the Skylander is processed, the `OnSkylanderProcessed` event is invoked and all public properties may be accessed.
-```cs
-portal.OnSkylanderProcessed += (slot, skylander) =>
-{
-    Console.WriteLine($"{skylander.Name} Processed.");
-    Console.WriteLine($"{skylander.Name} has {skylander.Money} money.");
-    Console.WriteLine($"{skylander.Name} is wearing {HatIndex.Hats[skylander.HatId]}.");
+    Console.WriteLine($"{figure.ToyName} was placed.");
 };
 ```
 
-None of the data you modify is saved to the Skylander until 
+Once the figure is processed, the `OnFigureProcessed` event is invoked with the created Figure.
+This time, the `Figure` object has a more specific type but the base type is returned.
+The `ToyType` property helps to determine the type of the `Figure` object.
+
+| ToyType             | Figure Type           |
+|---------------------|-----------------------|
+| AdventurePack       | AdventurePackFigure   |
+| MagicItem           | MagicItemFigure       |
+| Skylander           | SkylanderFigure       |
+| Trap                | TrapFigure            |
+| Vehicle             | VehicleFigure         |
+| RacingPack (Trophy) | RacePackFigure        |
+| CreationCrystal     | CreationCrystalFigure |
+
+You can therefore use the following code to select what should happen based on the ToyType:
 ```cs
-skylander.Save()
+portal.OnFigureProcessed += (slot, figure) =>
+{
+    Console.WriteLine($"{figure.ToyName} Processed.");
+    if (figure.ToyType == ToyType.Skylander)
+    {
+        var skylander = figure as SkylanderFigure;
+        Console.WriteLine($"{skylander.Name} has {skylander.Money} money.");
+    }
+    if (figure.ToyType == ToyType.Trap)
+    {
+        var trap = figure as TrapFigure;
+        VillainMetaData primaryVillainMetaData;
+        VillainIndex.Villains.TryGetValue(trap.PrimaryVillain.VillainType, out primaryVillainMetaData);
+        var primaryVillainName = primaryVillainMetaData?.Name ?? "Unknown";
+        Console.WriteLine($"{primaryVillainName} is trapped.");
+    }
+};
 ```
-is explicitly called.
+
+---
+
+### Figures
+The following section covers the properties that warrant further explanation.
+Anything not listed is assumed to be self-explanatory.
+
+#### Skylanders
+Skylanders cover any playable character other than those made from creation crystals.
+This includes core, giants, swappers, trap masters, sidekicks, superchargers, and senseis.
+
+Swappers are two different figures. The `ToyName` returned from accessing the property on a SkylanderFigure is
+therefore the half of the name that is applicable to the half of the swapper. This makes forming the name of swapper combos easier.
+
+##### Hats
+
+Setting and getting hats on figures is complicated since the method for retrieving a hat depends on the game.
+Therefore, the game you intend to pull from must be specified when getting the hat through
+```cs
+skylander.GetHat(SkylandersGame.SpyrosAdventure)
+    or setting the hat through
+skylander.SetHat(SkylandersGame.Giants, Hat.CombatHat)
+```
+When the hat is set, it should be worn in all games for which the hat is supported but does clear all other hats.
+
+##### Skills
+
+Modifying skills can be achieved through the functions
+```cs
+public void SetUpgrade(int index, bool value)
+    and
+public void SetUpgradePath(UpgradePath path)
+````
+`SetUpgrade` specifically sets the upgrades along the path to be unlocked.
+Upgrades 6-8 are for the path based skills for the currently selected path. When the path is swapped in games which allow for it,
+the upgrades at 11-13 are swapped with those in 6-8.
+
+Calling `SetUpgradePath` mimics this behaviour when switching to the opposite path.
+
+The properties `HasWowPow` and `HasSoulGem` may be used to abstract the need to specify the specific upgrade.
+
+#### Traps
+Traps are incredibly simple to modify. Each trap contains a list of up to six villains.
+These villains are cached and pushed down the list when a new villain is trapped. 
+
+The first villain in the list is the `PrimaryVillain`. 
+
+The games do not care about the element of the trap matching the element of the villain.
+It will load the villain stored in the trap regardless. 
+The prevention is done purely when trapping villains where the game prevents the wrong villain from being trapped into the wrong element trap in the first place.
+
+Two methods are provided for modifying the traps
+##### Method 1
+It is possible to get and set the cached villains through the methods
+```cs
+public bool TryGetCachedVillain(int villainIndex, out Villain villain) 
+    and
+public bool TrySetCachedVillain(int villainIndex, Villain value)
+```
+The primary villain can be modified through
+`trap.PrimaryVillain`
+
+In both of these cases, the `Villain` struct that is returned can be modified before being written back to the corresponding villain.
+
+##### Method 2
+A higher level wrapper is provided as part of the `TrapFigure` class which automatically moves the cached villains around by calling
+```cs
+public void TrapVillain(VillainType villainType)
+```
+
+#### Vehicles
+TBC
+
+#### Racing Packs
+TBC
+
+#### Creation Crystals
+TBC
+
+---
+
+### Saving
+
+None of the data you modify is saved to the figure until `Save` is explicitly called.
+The `Save` function is dependent on the `Figure` object type. Some figure types cannot call save. 
+This is intentional to avoid corrupting "readonly" figure types.
+
+Some figure types also feature a `Reset` function. This marks the figure for formatting in the same way `reset broken toys` does in the games.
+Formatting itself is handled on loading the figures. If a figure is seen as fully corrupt or marked for formatting, it will be formatted.
+
+Note that variant traps will not be marked for reset by the reset function to avoid the loss of the variant.
+However, if the trap becomes fully corrupt, it will cause the trap to be formatted. This is largely unavoidable.
 
 This API leverages the NFC redundancy block to avoid corruption the same way the game does.
 
@@ -106,6 +218,8 @@ should you use the write capabilities of this API, you pass this message on to t
 Figures can almost always be restored by navigating to the settings menu on Giants or later from the main menu and selecting `Reset Broken Toys`.
 
 Usage of this tool for the purposes of piracy or violating the protections placed on the figures is not permitted.
+
+---
 
 ### The Portal Sound Engine
 Trap Team portals have a built-in speaker. Sound can be sent to the speaker using one of the two following methods.
@@ -126,129 +240,7 @@ As a result, if you must trigger some code off of either the start or end of a s
 
 If you wish to interrupt playback, you may call either `clip.Stop()` or to clear all sound `portal.ClearAudio()`
 
-## Full Example
-```cs
-using System;
-using System.Drawing;
-using System.Threading;
-using SkanderNET;
-
-namespace SkanderNET_Example
-{
-    internal class Program
-    {
-        static Portal _currentPortal;
-        
-        static void OnPortalFound(Portal portal)
-        {
-            _currentPortal = portal;
-            
-            portal.OnError += e => { 
-                Console.WriteLine($"[ERROR] {e.Message}");
-                portal.SetColor(Color.Red);
-            };
-            
-            portal.OnReady += () =>
-            {
-                new Thread(() =>
-                {
-                    for (int flashIndex = 0; flashIndex < 2; flashIndex++)
-                    {
-                        portal.SetColor(255, 255, 255);
-                        Thread.Sleep(200);
-                        portal.SetColor(0, 0, 0);
-                        Thread.Sleep(200);
-                    }
-                    portal.SetColor(0, 255, 0);
-                }).Start();
-            };
-            
-            portal.OnSkylanderPlaced += (slot, skylander) =>
-            {
-                SkylanderGenericData genericData;
-                if (!skylander.TryGetMetaData(out genericData))
-                    return;
-                Console.WriteLine($"{skylander.Name} was placed.");
-                SetColorFromElement(portal, genericData.Element);
-            };
-            
-            portal.OnSkylanderProcessed += (slot, skylander) =>
-            {
-                Console.WriteLine($"{skylander.Name} Processed.");
-                Console.WriteLine($"{skylander.Name} has {skylander.Money} money.");
-            };
-
-            portal.OnSkylanderRemoved += (slot, skylander) => {
-
-                Console.WriteLine($"{skylander.Name} was removed.");
-                portal.SetColor(255, 255, 255);
-            };
-            
-            portal.Activate();
-        }
-        
-        public static void Main(string[] args)
-        {
-            PortalFinder.OnPortalFound += OnPortalFound;
-            PortalFinder.InitSearch();
-            while (true)
-            {
-                var key = Console.ReadKey();
-                if (key.Key == ConsoleKey.C)
-                    _currentPortal?.Dispose();
-                if (key.Key == ConsoleKey.X)
-                    break;
-            }
-            PortalFinder.Close();
-        }
-
-        static void SetColorFromElement(Portal portal, SkylanderElement element)
-        {
-            switch (element)
-            {
-                case SkylanderElement.None:
-                    portal.SetColor(Color.FromArgb(255, 255, 255));
-                    break;
-                case SkylanderElement.Air:
-                    portal.SetColor(Color.FromArgb(0x6c, 0xbc, 0xf5));
-                    break;
-                case SkylanderElement.Earth:
-                    portal.SetColor(Color.FromArgb(0xdf, 0x90, 0x30));
-                    break;
-                case SkylanderElement.Fire:
-                    portal.SetColor(Color.FromArgb(0xff, 0x00, 0x00));
-                    break;
-                case SkylanderElement.Water: 
-                    portal.SetColor(Color.FromArgb(0x00, 0x00, 0xff));
-                    break;
-                case SkylanderElement.Magic:
-                    portal.SetColor(Color.FromArgb(0xb7, 0x59, 0xf3)); 
-                    break;
-                case SkylanderElement.Tech:
-                    portal.SetColor(Color.FromArgb(0xff, 0x70, 0x30));
-                    break;
-                case SkylanderElement.Life:
-                    portal.SetColor(Color.FromArgb(0x00, 0xff, 0x00));
-                    break;
-                case SkylanderElement.Undead:
-                    portal.SetColor(Color.FromArgb(0xd0, 0x90, 0xd0));
-                    break;
-                case SkylanderElement.Light:
-                    portal.SetColor(Color.FromArgb(0xff, 0xcf, 0x80));
-                    break;
-                case SkylanderElement.Dark:
-                    portal.SetColor(Color.FromArgb(0x23, 0x3e, 0x5b));
-                    break;
-                case SkylanderElement.Kaos:
-                    portal.SetColor(Color.FromArgb(0x72, 0x66, 0x9b));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(element), element, null);
-            }
-        }
-    }
-}
-```
+---
 
 ## Licensing
 

@@ -2,7 +2,7 @@
 
 namespace SkanderNET
 {
-    internal enum VehicleTopperType : byte
+    public enum VehicleTopperType : byte
     {
         None = 0x0,
         TheDarkness = 0x01,

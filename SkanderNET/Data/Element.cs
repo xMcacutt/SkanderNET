@@ -1,8 +1,8 @@
 ﻿namespace SkanderNET
 {
-    public enum Element
+    public enum Element : byte
     {
-        Invalid = -1,
+        Invalid = 255,
         None = 0,
         Earth = 1,
         Water = 2,

@@ -13,15 +13,15 @@ namespace SkanderNET
         private UInt24 _experience2011; // max 33000
         internal ushort Money;
         internal uint TotalPlayTime;
-        internal byte _areaSequenceValue1;
+        internal byte AreaSequenceValue1;
         internal ushort Crc1;
         internal ushort Crc2;
         internal ushort Crc3;
         private UInt24 _flags1; 
-        private Platform2011 Platforms2011;
+        private Platform2011 _platforms2011;
         private ushort _hat2011;
         internal byte RegionCountId;
-        private Platform2013 Platforms2013;
+        private Platform2013 _platforms2013;
         internal ulong OwnerId;
         private fixed byte _nickname[0x20];
         private byte _lastPlacedMinute;
@@ -46,7 +46,7 @@ namespace SkanderNET
         private fixed byte _usageInfo[0x10];
         // Block 0x11 - Has its own Area Sequence value
         internal ushort Crc4;
-        private byte _areaSequenceValue2; 
+        internal byte AreaSequenceValue2; 
         private ushort _experience2012; // max 63500 in SF and 65535 in previous
         private byte _hat2012;
         private ushort _flags2;
@@ -181,18 +181,6 @@ namespace SkanderNET
             }
         }
         
-        internal byte AreaSequenceValue1
-        {
-            get { return _areaSequenceValue1; }
-            set { _areaSequenceValue1 = value; }
-        }
-        
-        internal byte AreaSequenceValue2
-        {
-            get { return _areaSequenceValue2; }
-            set { _areaSequenceValue2 = value; }
-        }
-        
         internal uint Experience
         {
             get
@@ -262,25 +250,25 @@ namespace SkanderNET
             get
             {
                 var result = Platform.None;
-                if ((Platforms2011 & Platform2011.Wii) != 0)
+                if ((_platforms2011 & Platform2011.Wii) != 0)
                     result |= Platform.Wii;
-                if ((Platforms2011 & Platform2011.Xbox360) != 0)
+                if ((_platforms2011 & Platform2011.Xbox360) != 0)
                     result |= Platform.Xbox360;
-                if ((Platforms2011 & Platform2011.PlayStation3) != 0)
+                if ((_platforms2011 & Platform2011.PlayStation3) != 0)
                     result |= Platform.PlayStation3;
-                if ((Platforms2011 & Platform2011.PC) != 0)
+                if ((_platforms2011 & Platform2011.PC) != 0)
                     result |= Platform.PC;
-                if ((Platforms2011 & Platform2011.Nintendo3ds) != 0)
+                if ((_platforms2011 & Platform2011.Nintendo3ds) != 0)
                     result |= Platform.Nintendo3ds;
-                if ((Platforms2013 & Platform2013.WiiU) != 0)
+                if ((_platforms2013 & Platform2013.WiiU) != 0)
                     result |= Platform.WiiU;
-                if ((Platforms2013 & Platform2013.XboxOne) != 0)
+                if ((_platforms2013 & Platform2013.XboxOne) != 0)
                     result |= Platform.XboxOne;
-                if ((Platforms2013 & Platform2013.PlayStation4) != 0)
+                if ((_platforms2013 & Platform2013.PlayStation4) != 0)
                     result |= Platform.PlayStation4;
-                if ((Platforms2013 & Platform2013.iOS) != 0)
+                if ((_platforms2013 & Platform2013.iOS) != 0)
                     result |= Platform.iOS;
-                if ((Platforms2013 & Platform2013.NintendoSwitch) != 0)
+                if ((_platforms2013 & Platform2013.NintendoSwitch) != 0)
                     result |= Platform.NintendoSwitch;
                 return result;
             }
@@ -308,8 +296,8 @@ namespace SkanderNET
                     p2013 |= Platform2013.iOS;
                 if ((value & Platform.NintendoSwitch) != 0)
                     p2013 |= Platform2013.NintendoSwitch;
-                Platforms2011 = p2011;
-                Platforms2013 = p2013;
+                _platforms2011 = p2011;
+                _platforms2013 = p2013;
             }
         }       
 
@@ -563,6 +551,9 @@ namespace SkanderNET
             set { _data.Money = value; }
         }
 
+        public uint PlayTime => _data.TotalPlayTime;
+        public uint OwnershipChangedCount => _data.OwnershipChangedCount;
+        
         public uint Level
         {
             get { return SkylanderExperience.GetLevel(Experience); }
@@ -660,6 +651,8 @@ namespace SkanderNET
             set { _data.BattleGroundFlags = value; }
         }
 
+        public Platform Platforms => _data.Platforms;
+        
         public byte SwapForceAccoladeRank => _data.SwapForceAccoladeRank;
         public byte GiantsAccoladeRank => _data.GiantsAccoladeRank;
 
