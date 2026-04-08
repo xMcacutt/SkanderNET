@@ -4,11 +4,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using SkanderNET.Crypto;
+using SkanderNET.Data;
+using SkanderNET.Exceptions;
+using SkanderNET.PortalComms;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Skylander
+    internal unsafe struct Skylander
     {
         private UInt24 _experience2011; // max 33000
         internal ushort Money;
@@ -445,6 +450,10 @@ namespace SkanderNET
             return true;
         }
         
+        /// <summary>
+        /// Saves changes made to the figure back to the figure or file
+        /// </summary>
+        /// <exception cref="ChecksumGenerationFailureException">Raised when checksum generation fails</exception>
         public void Save()
         {
             _data.AreaSequenceValue1++;
@@ -455,6 +464,10 @@ namespace SkanderNET
             Session.SaveFigure(this, RawData);
         }
 
+        /// <summary>
+        /// Marks the figure for formatting.
+        /// The figure will then be formatted the next time it is placed on a portal or loaded with this library
+        /// </summary>
         public void Reset()
         {
             Session.MarkForFormat();
@@ -538,7 +551,7 @@ namespace SkanderNET
             var crc3 = CRC16_IBM3740.Generate(rawFigure.Skip(0x80).Take(0x10).ToArray());
             Buffer.BlockCopy(BitConverter.GetBytes(crc3), 0, rawFigure, 0x8E, 2);
         }
-
+        
         public uint Experience
         {
             get { return _data.Experience; }
@@ -551,7 +564,11 @@ namespace SkanderNET
             set { _data.Money = value; }
         }
 
+        /// <summary>
+        /// Total time played in seconds
+        /// </summary>
         public uint PlayTime => _data.TotalPlayTime;
+
         public uint OwnershipChangedCount => _data.OwnershipChangedCount;
         
         public uint Level
@@ -560,6 +577,11 @@ namespace SkanderNET
             set { Experience = SkylanderExperience.GetExperience(value); }
         }
 
+        /// <summary>
+        /// Gets the hat worn by the skylander according to a specific game
+        /// </summary>
+        /// <param name="game">Which game's algorithm should be used for finding the first hat worn</param>
+        /// <returns>The hat worn by the skylander</returns>
         public Hat GetHat(SkylandersGame game)
         {
             switch (game)
@@ -574,6 +596,10 @@ namespace SkanderNET
             }
         }
 
+        /// <summary>
+        /// Sets the hat worn by the skylander according to a specific game
+        /// </summary>
+        /// <param name="game">Which game's algorithm should be used for finding the first hat worn</param>
         public void SetHat(SkylandersGame game, Hat hat)
         {
             switch (game)
@@ -591,18 +617,36 @@ namespace SkanderNET
             }
         }
 
+        /// <summary>
+        /// The date and time of the last reset to the figure
+        /// </summary>
+        /// <remarks>
+        /// Seconds are always zero
+        /// </remarks>
         public DateTime LastResetTime => _data.LastReset;
         
+        /// <summary>
+        /// The date and time that the figure was last saved
+        /// </summary>
+        /// <remarks>
+        /// Seconds are always zero
+        /// </remarks>
         public DateTime LastPlacedTime => _data.LastPlaced;
         
+        /// <summary>
+        /// The date and time that the figure was built
+        /// </summary>
+        /// <remarks>
+        /// Seconds and minutes are always zero
+        /// </remarks>
         public DateTime LastBuildTime => _data.LastBuild;
-
+        
         public ushort HeroPoints
         {
             get { return _data.HeroPoints; }
             set { _data.HeroPoints = value; }
         }
-
+        
         public HeroicChallengesSpyrosAdventure CompletedSpyrosAdventureHeroicChallenges
         {
             get { return _data.CompletedSpyrosAdventureHeroicChallenges; }
@@ -658,32 +702,39 @@ namespace SkanderNET
 
         public bool HasChosenPath => _data.UpgradeData.HasChosenPath;
         public UpgradePath Path => _data.UpgradeData.Path;
-        public bool HasSoulGem
+        
+        /// <summary>
+        /// Whether a specific upgrade has been unlocked by index
+        /// </summary>
+        /// <param name="upgrade">The upgrade to check</param>
+        /// <returns>true if the upgrade has been unlocked for the skylander</returns>
+        public bool HasUpgrade(Upgrade upgrade)
         {
-            get { return _data.UpgradeData.HasSoulGem; }
-            set { _data.UpgradeData = value ? _data.UpgradeData.WithUpgrade(9) :  _data.UpgradeData.WithoutUpgrade(9); }
+            return _data.UpgradeData.HasUpgrade(upgrade);
         }
-        public bool HasWowPow
+        
+        /// <summary>
+        /// Sets a specific upgrade's unlock status
+        /// </summary>
+        /// <param name="upgrade">The upgrade to set</param>
+        /// <param name="value">Whether the upgrade should be unlocked or not</param>
+        public void SetUpgrade(Upgrade upgrade, bool value)
         {
-            get { return _data.UpgradeData.HasWowPow; }
-            set { _data.UpgradeData = value ? _data.UpgradeData.WithUpgrade(10) :  _data.UpgradeData.WithoutUpgrade(10); }
+            _data.UpgradeData = value ? _data.UpgradeData.WithUpgrade(upgrade) :  _data.UpgradeData.WithoutUpgrade(upgrade);
         }
-        public bool HasUpgrade(int index)
-        {
-            return _data.UpgradeData.HasUpgrade(index);
-        }
-        public void SetUpgrade(int index, bool value)
-        {
-            _data.UpgradeData = value ? _data.UpgradeData.WithUpgrade(index) :  _data.UpgradeData.WithoutUpgrade(index);
-        }
+        
+        /// <summary>
+        /// Sets the current upgrade path
+        /// </summary>
+        /// <param name="path">Which path to choose</param>
         public void SetUpgradePath(UpgradePath path)
         {
             switch (path)
             {
-                case UpgradePath.Left:
+                case UpgradePath.Top:
                     _data.UpgradeData = _data.UpgradeData.ChooseLeftPath();
                     break;
-                case UpgradePath.Right:
+                case UpgradePath.Bottom:
                     _data.UpgradeData = _data.UpgradeData.ChooseRightPath();
                     break;
                 case UpgradePath.None:

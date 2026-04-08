@@ -1,16 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public enum UpgradePath
     {
-        Left,
-        Right,
+        Top,
+        Bottom,
         None
     }
+
+    public enum Upgrade
+    {
+        Upgrade1 = 2,
+        Upgrade2 = 3,
+        Upgrade3 = 4,
+        Upgrade4 = 5,
+        
+        PathUpgrade1 = 6,
+        PathUpgrade2 = 7,
+        PathUpgrade3 = 8,
+        
+        SoulGem = 9,
+        WowPow = 10,
+    }
     
-    public struct UpgradeData
+    internal struct UpgradeData
     {
         private readonly ushort _flags;
 
@@ -21,27 +35,28 @@ namespace SkanderNET
 
         internal ushort Raw => _flags;
         internal bool HasChosenPath => (_flags & 0x1) != 0;
-        internal UpgradePath Path => !HasChosenPath ? UpgradePath.None : (_flags & 0x2) != 0 ? UpgradePath.Right : UpgradePath.Left;
-        internal bool HasSoulGem => HasUpgrade(9);
-        internal bool HasWowPow => HasUpgrade(10);
+        internal UpgradePath Path => !HasChosenPath ? UpgradePath.None : (_flags & 0x2) != 0 ? UpgradePath.Bottom : UpgradePath.Top;
 
-        internal bool HasUpgrade(int index)
+        internal bool HasUpgrade(Upgrade upgrade)
         {
+            var index = (int)upgrade;
             if (index < 0 || index > 13)
                 throw new ArgumentOutOfRangeException(nameof(index));
             return (_flags & (1 << index)) != 0;
         }
         
-        internal UpgradeData WithUpgrade(int index)
+        internal UpgradeData WithUpgrade(Upgrade upgrade)
         {
+            var index = (int)upgrade;
             if (index < 0 || index > 15)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             return new UpgradeData((ushort)(_flags | (1 << index)));
         }
         
-        internal UpgradeData WithoutUpgrade(int index)
+        internal UpgradeData WithoutUpgrade(Upgrade upgrade)
         {
+            var index = (int)upgrade;
             if (index < 0 || index > 15)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
@@ -50,10 +65,10 @@ namespace SkanderNET
         
         internal UpgradeData ChooseLeftPath()
         {
-            if (Path == UpgradePath.Left)
+            if (Path == UpgradePath.Top)
                 return this;
             var f = _flags;
-            if (Path == UpgradePath.Right)
+            if (Path == UpgradePath.Bottom)
                 f = SwapBits(f, 6, 11);
             f |= 0x1;
             f &= unchecked((ushort)~0x2);
@@ -62,10 +77,10 @@ namespace SkanderNET
 
         internal UpgradeData ChooseRightPath()
         {
-            if (Path == UpgradePath.Right)
+            if (Path == UpgradePath.Bottom)
                 return this;
             var f = _flags;
-            if (Path == UpgradePath.Left)
+            if (Path == UpgradePath.Top)
                 f = SwapBits(f, 6, 11);
             f |= 0x3;
             return new UpgradeData(f);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SkanderNET
+﻿namespace SkanderNET.Data
 {
     public struct BattleGroundFlags
     {

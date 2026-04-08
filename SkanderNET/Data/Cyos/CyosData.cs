@@ -1,8 +1,7 @@
 ﻿using System;
-using SkanderNET.Cyos;
-using SkanderNET.Data.Cyos;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Data.Cyos
 {
     public struct CyosData
     {

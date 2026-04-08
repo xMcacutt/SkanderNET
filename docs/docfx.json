@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../SkanderNET",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern",
+      "templates/custom"
+    ],
+    "globalMetadata": {
+      "_appName": "",
+      "_appTitle": "SkanderNET",
+      "_appLogoPath": "images/logo.svg",
+      "_appFaviconPath": "images/favicon.ico",
+      "_enableSearch": true
+    }
+  }
+}

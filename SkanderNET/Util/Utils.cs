@@ -1,11 +1,10 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace SkanderNET
+namespace SkanderNET.Util
 {
-    public static class Utils
+    internal static class Utils
     {
-        public static uint ReadBits(byte[] data, int bitOffset, int bitCount)
+        internal static uint ReadBits(byte[] data, int bitOffset, int bitCount)
         {
             var value = 0;
             for (var i = 0; i < bitCount; i++)
@@ -18,7 +17,7 @@ namespace SkanderNET
             return (uint)value;
         }
 
-        public static void WriteBits(byte[] data, int bitOffset, int bitCount, uint value)
+        internal static void WriteBits(byte[] data, int bitOffset, int bitCount, uint value)
         {
             for (var i = 0; i < bitCount; i++)
             {
@@ -32,7 +31,7 @@ namespace SkanderNET
             }
         }
         
-        public static T ByteArrayToStruct<T>(byte[] data) where T : struct
+        internal static T ByteArrayToStruct<T>(byte[] data) where T : struct
         {
             var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
             try
@@ -48,7 +47,7 @@ namespace SkanderNET
             }
         }
 
-        public static byte[] StructToByteArray<T>(T obj) where T : struct
+        internal static byte[] StructToByteArray<T>(T obj) where T : struct
         {
             var size = Marshal.SizeOf(typeof(T));
             var arr = new byte[size];

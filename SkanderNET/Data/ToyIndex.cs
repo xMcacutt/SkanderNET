@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public enum ToyType
     {
@@ -324,6 +324,9 @@ namespace SkanderNET
         Air,
     }
     
+    /// <summary>
+    /// Generic data about a toy
+    /// </summary>
     public class ToyMetaData
     {
         public readonly string Name;

@@ -1,11 +1,11 @@
-﻿namespace SkanderNET
+﻿namespace SkanderNET.Crypto
 {
-    public class CRC16_IBM3740
+    internal class CRC16_IBM3740
     {
         private const ushort poly = 0x1021;
         private const ushort init = 0xFFFF;
         
-        public static ushort Generate(byte[] data)
+        internal static ushort Generate(byte[] data)
         {
             var crc = init;
             foreach (var b in data)

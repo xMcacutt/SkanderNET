@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using static SkanderNET.LibUsb;
+using SkanderNET.Exceptions;
+using SkanderNET.Figures;
+using static SkanderNET.Util.LibUsb;
 
-namespace SkanderNET
+namespace SkanderNET.PortalComms
 {
     public class Portal : IDisposable
     {
@@ -23,22 +25,41 @@ namespace SkanderNET
         /// Invoked when a figure is initially placed and its first sector containing character info is processed.
         /// </summary>
         public event Action<int, Figure> OnFigurePlaced;
+        
+        private Action<int, Figure> _onFigureProcessed;
         /// <summary>
         /// Invoked when a figure has fully loaded.
         /// </summary>
-        public event Action<int, Figure> OnFigureProcessed;
+        public event Action<int, Figure> OnFigureProcessed
+        {
+            add
+            {
+                _onFigureProcessed += value;
+                foreach (var slot in _slots)
+                    if (slot.IsLoaded && slot.CurrentFigure != null)
+                        SafeInvoke(value, slot.Index, slot.CurrentFigure);
+            }
+            remove
+            {
+                _onFigureProcessed -= value;
+            }
+        }
+        
         /// <summary>
         /// Invoked when a figure is removed from the portal.
         /// </summary>
         public event Action<int, Figure> OnFigureRemoved;
+        
         /// <summary>
-        /// Invoked when <see cref="Figure.Save"/> is called on a <see cref="Figure"/>.
+        /// Invoked when save is called on a <see cref="Figure"/>.
         /// </summary>
         public event Action<int, Figure> OnFigureSaved;
+        
         /// <summary>
         /// Invoked when the portal is activated and ready to being receiving queries.
         /// </summary>
         public event Action OnReady;
+        
         /// <summary>
         /// Invoked when the portal throws an exception.
         /// </summary>
@@ -119,19 +140,22 @@ namespace SkanderNET
             if (slotIndex >= _slots.Length)
                 return;
             var slot = _slots[slotIndex];
-            if (slot.PendingBlock != blockIndex)
-                return;
-            slot.PendingBlock = uint.MaxValue;
-            slot.RetryCount = 0;
-            if (slot.CurrentFigureSession == null && blockIndex == 0)
-                slot.CurrentFigureSession = new FigureSession(this, slot.Index);
+            lock (slot.Sync)
+            {
+                if (slot.PendingBlock != blockIndex)
+                    return;
+                slot.PendingBlock = uint.MaxValue;
+                slot.RetryCount = 0;
+                if (slot.CurrentFigureSession == null && blockIndex == 0)
+                    slot.CurrentFigureSession = new FigureSession(this, slot.Index);
 
-            if (slot.CurrentFigureSession == null)
-                return;
+                if (slot.CurrentFigureSession == null)
+                    return;
 
-            var blockData = new byte[16];
-            Array.Copy(data, 3, blockData, 0, 16);
-            slot.CurrentFigureSession.HandleBlock(blockIndex, blockData);
+                var blockData = new byte[16];
+                Array.Copy(data, 3, blockData, 0, 16);
+                slot.CurrentFigureSession.HandleBlock(blockIndex, blockData);
+            }
         }
 
         private void HandleStatusResponse(byte[] data)
@@ -141,20 +165,24 @@ namespace SkanderNET
             var statusMask = BitConverter.ToUInt32(data, 1);
             foreach (var slot in _slots)
             {
-                var newStatus = (int)(statusMask >> (slot.Index * 2)) & 3;
-                var oldStatus = slot.Status;
-                slot.Status = newStatus;
-                if (newStatus != 0 && oldStatus == 0)
-                    SendQuery(slot.Index, 0);
-                else if (newStatus == 0 && oldStatus != 0)
+                lock (slot.Sync)
                 {
-                    if (slot.CurrentFigureSession == null)
-                        continue;
-                    var handler = OnFigureRemoved;
-                    SafeInvoke(handler, slot.Index, slot.CurrentFigure);
-                    slot.CurrentFigure = null;
-                    slot.CurrentFigureSession = null;
-                    slot.Status = 0;
+                    var newStatus = (int)(statusMask >> (slot.Index * 2)) & 3;
+                    var oldStatus = slot.Status;
+                    slot.Status = newStatus;
+                    if (newStatus != 0 && oldStatus == 0)
+                        SendQuery(slot.Index, 0);
+                    else if (newStatus == 0 && oldStatus != 0)
+                    {
+                        if (slot.CurrentFigureSession == null)
+                            continue;
+                        slot.IsLoaded = false;
+                        var handler = OnFigureRemoved;
+                        SafeInvoke(handler, slot.Index, slot.CurrentFigure);
+                        slot.CurrentFigure = null;
+                        slot.CurrentFigureSession = null;
+                        slot.Status = 0;
+                    }
                 }
             }
         }
@@ -164,34 +192,36 @@ namespace SkanderNET
             if (Device == IntPtr.Zero)
                 return;
 
-            var buffer = new byte[32];
-            buffer[0] = (byte)'L';
+            var buffer1 = new byte[0x20];
+            buffer1[0] = (byte)'L';
 
-            buffer[1] = 0x00;
-            buffer[2] = r;
-            buffer[3] = g;
-            buffer[4] = b;
+            buffer1[1] = 0x00;
+            buffer1[2] = r;
+            buffer1[3] = g;
+            buffer1[4] = b;
 
-            buffer[5] = r;
-            buffer[6] = g;
-            buffer[7] = b;
+            buffer1[5] = r;
+            buffer1[6] = g;
+            buffer1[7] = b;
 
             lock (_writeQueue)
-                _writeQueue.Enqueue(buffer);
+                _writeQueue.Enqueue(buffer1);
+
+            var buffer2 = new byte[0x20];
             
-            buffer[0] = (byte)'L';
+            buffer2[0] = (byte)'L';
 
-            buffer[1] = 0x01;
-            buffer[2] = r;
-            buffer[3] = g;
-            buffer[4] = b;
+            buffer2[1] = 0x01;
+            buffer2[2] = r;
+            buffer2[3] = g;
+            buffer2[4] = b;
 
-            buffer[5] = r;
-            buffer[6] = g;
-            buffer[7] = b;
-
+            buffer2[5] = r;
+            buffer2[6] = g;
+            buffer2[7] = b;
+                  
             lock (_writeQueue)
-                _writeQueue.Enqueue(buffer);
+                _writeQueue.Enqueue(buffer2);
         }
 
         /// <summary>
@@ -237,6 +267,9 @@ namespace SkanderNET
                 _writeQueue.Enqueue(buffer);
         }
         
+        /// <summary>
+        /// Sends a synchronization message to the portal to attempt to re-update the portal status
+        /// </summary>
         public void Sync() => SendSyncStatus();
         
         /// <summary>
@@ -274,8 +307,11 @@ namespace SkanderNET
             buffer[2] = (byte)block;
             
             var s = _slots[slot];
-            s.PendingBlock = block;
-            s.LastQueryTime = DateTime.UtcNow;
+            lock (s.Sync)
+            {
+                s.PendingBlock = block;
+                s.LastQueryTime = DateTime.UtcNow;
+            }
             lock (_writeQueue) 
                 _writeQueue.Enqueue(buffer);
         }
@@ -375,18 +411,22 @@ namespace SkanderNET
                 
                 foreach (var slot in _slots)
                 {
-                    if (slot.PendingBlock == uint.MaxValue)
-                        continue;
-
-                    if ((DateTime.UtcNow - slot.LastQueryTime).TotalMilliseconds > 300)
+                    lock (slot.Sync)
                     {
-                        if (slot.RetryCount > 5)
-                        {
-                            slot.PendingBlock = uint.MaxValue;
+                        if (slot.PendingBlock == uint.MaxValue)
                             continue;
+
+                        if ((DateTime.UtcNow - slot.LastQueryTime).TotalMilliseconds > 300)
+                        {
+                            if (slot.RetryCount > 5)
+                            {
+                                slot.PendingBlock = uint.MaxValue;
+                                continue;
+                            }
+
+                            SendQuery(slot.Index, slot.PendingBlock);
+                            slot.RetryCount++;
                         }
-                        SendQuery(slot.Index, slot.PendingBlock);
-                        slot.RetryCount++;
                     }
                 }
                 
@@ -399,7 +439,9 @@ namespace SkanderNET
 
         internal void SetFigure(int slotIndex, Figure figure)
         {
-            _slots[slotIndex].CurrentFigure = figure;
+            var slot = _slots[slotIndex];
+            lock (slot.Sync)
+                slot.CurrentFigure = figure;
         }
         
         internal void FigurePlaced(int slotIndex, Figure figure)
@@ -410,7 +452,10 @@ namespace SkanderNET
         
         internal void FigureProcessed(int slotIndex, Figure figure)
         {
-            var handler = OnFigureProcessed;
+            var slot = _slots[slotIndex];
+            lock (slot.Sync)
+                slot.IsLoaded = true;
+            var handler = _onFigureProcessed;
             SafeInvoke(handler, slotIndex, figure);
         }
         

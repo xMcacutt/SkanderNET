@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using SkanderNET.Crypto;
+using SkanderNET.Data;
+using SkanderNET.Exceptions;
+using SkanderNET.PortalComms;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
     internal class DataArea
     {
@@ -79,6 +84,12 @@ namespace SkanderNET
             }
         }
 
+        
+        /// <summary>
+        /// Loads a figure from a filestream (must be the encrypted dump)
+        /// </summary>
+        /// <param name="fileStream">An open filestream for the file with appropriate access</param>
+        /// <returns>A Figure independent of a FigureSession or Portal</returns>
         public static Figure LoadFromFile(FileStream fileStream)
         {
             var tempSession = new FigureSession(null, 0, fileStream);
@@ -94,13 +105,21 @@ namespace SkanderNET
         {
             ToyMetaData metaData;
             if (!ToyIndex.Toys.TryGetValue(_header.Toy, out metaData))
+            {
+                Portal?.Error(new UnknownToyException($"Unsupported toy with id {(int)_header.Toy:X}"));
                 return null;
-            PreDecryptVerify(metaData);
-            DecryptData();
-#if DEBUG
-            DumpFigure($"./{metaData.Name}"); // TODO remove this before release
-#endif
-            SeparateData();
+            }
+            try
+            {
+                PreDecryptVerify(metaData);
+                DecryptData();
+                SeparateData();
+            }
+            catch (Exception ex)
+            {
+                Portal?.Error(new Exception("Failure during figure parsing", ex));
+                return null;
+            }
             if (!VerifyData(metaData.Type) || _markedForFormat)
             {
                 if (!FormatData(metaData))
@@ -112,6 +131,11 @@ namespace SkanderNET
                     return null;
                 }
                 Console.WriteLine("Format completed");
+            }
+            if (_dataAreas.Count < 2 || (_hasExtendedDataArea && _extendedDataAreas.Count < 2))
+            {
+                Portal.Error(new Exception("Data areas are invalid."));
+                return null;
             }
             DetermineActiveArea();
             CompileRawData();
@@ -139,14 +163,14 @@ namespace SkanderNET
         internal void MarkForFormat()
         {
             var data = new byte[0x10];
-            Portal.SendWrite(_slotIndex, 0x8, data);
-            Portal.SendWrite(_slotIndex, 0x24, data);
+            WriteToFigure(0x8, data);
+            WriteToFigure(0x24, data);
             if (_hasExtendedDataArea)
             {
-                Portal.SendWrite(_slotIndex, 0x11, data);
-                Portal.SendWrite(_slotIndex, 0x2d, data);
+                WriteToFigure(0x11, data);
+                WriteToFigure(0x2d, data);
             }
-            Portal.Reset();
+            Portal?.Reset();
         }
 
         private bool FormatData(ToyMetaData metaData)
@@ -340,13 +364,15 @@ namespace SkanderNET
                     if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, localBlockIndex * 0x10, block, 0x0, 0x10);
+                    Buffer.BlockCopy(rawData, localBlockIndex * 0x10, _rawFigure, (startingBlock + blockIndex + 1) * 0x10, 0x10);
                     localBlockIndex++;
                     block = FigureEncryption.EncryptBlock(_rawTag, (uint)(startingBlock + blockIndex + 0x1), block);
-                    Portal.SendWrite(_slotIndex, (uint)(startingBlock + blockIndex + 0x1), block);
+                    WriteToFigure((uint)(startingBlock + blockIndex + 1), block);
                 }
                 Buffer.BlockCopy(rawData, 0x0, block, 0x0, 0x10);
+                Buffer.BlockCopy(rawData, 0x0, _rawFigure, startingBlock * 0x10, 0x10);
                 block = FigureEncryption.EncryptBlock(_rawTag, (uint)startingBlock, block);
-                Portal.SendWrite(_slotIndex, (uint)startingBlock, block);
+                WriteToFigure((uint)startingBlock, block);
                 _activeArea = _activeArea == 0 ? 1 : 0;
                 
                 localBlockIndex = 1;
@@ -356,13 +382,15 @@ namespace SkanderNET
                     if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
                     Buffer.BlockCopy(rawData, 0x70 + localBlockIndex * 0x10, block, 0x0, 0x10);
+                    Buffer.BlockCopy(rawData, 0x70 + localBlockIndex * 0x10, _rawFigure, (startingBlock + blockIndex + 1) * 0x10, 0x10);
                     localBlockIndex++;
                     block = FigureEncryption.EncryptBlock(_rawTag, (uint)(startingBlock + blockIndex + 0x1), block);
-                    Portal.SendWrite(_slotIndex, (uint)(startingBlock + blockIndex + 0x1), block);
+                    WriteToFigure((uint)(startingBlock + blockIndex + 1), block);
                 }
                 Buffer.BlockCopy(rawData, 0x70, block, 0x0, 0x10);
+                Buffer.BlockCopy(rawData, 0x70, _rawFigure, startingBlock * 0x10, 0x10);
                 block = FigureEncryption.EncryptBlock(_rawTag, (uint)startingBlock, block);
-                Portal.SendWrite(_slotIndex, (uint)startingBlock, block);
+                WriteToFigure((uint)startingBlock, block);
                 _activeExtendedArea = _activeExtendedArea == 0 ? 1 : 0;
             }
             else
@@ -373,33 +401,54 @@ namespace SkanderNET
                 {
                     if ((startingBlock + blockIndex + 1 - 3) % 4 == 0)
                         continue;
+                    if (figure.ToyType == ToyType.Crystal &&
+                        (startingBlock + blockIndex + 1 == 0x22 || startingBlock + blockIndex + 1 == 0x3E))
+                    {
+                        localBlockIndex++;
+                        continue;
+                    }
                     Buffer.BlockCopy(rawData, localBlockIndex * 0x10, block, 0x0, 0x10);
+                    Buffer.BlockCopy(rawData, localBlockIndex * 0x10, _rawFigure, (startingBlock + blockIndex + 1) * 0x10, 0x10);
                     localBlockIndex++;
                     block = FigureEncryption.EncryptBlock(_rawTag, (uint)(startingBlock + blockIndex + 1), block);
-                    Portal.SendWrite(_slotIndex, (uint)(startingBlock + blockIndex + 1), block);
+                    WriteToFigure((uint)(startingBlock + blockIndex + 1), block);
                 }
                 Buffer.BlockCopy(rawData, 0x0, block, 0x0, 0x10);
+                Buffer.BlockCopy(rawData, 0x0, _rawFigure, startingBlock * 0x10, 0x10);
                 block = FigureEncryption.EncryptBlock(_rawTag, (uint)startingBlock, block);
-                Portal.SendWrite(_slotIndex, (uint)startingBlock, block);
+                WriteToFigure((uint)startingBlock, block);
                 _activeArea = _activeArea == 0 ? 1 : 0;
             }
-            Portal.FigureSaved(_slotIndex, figure);
+            Portal?.FigureSaved(_slotIndex, figure);
         }
 
-        internal void DumpFigure(string filePath)
+        internal void DumpFigure(string filePath, bool encrypted)
         {
-            File.WriteAllBytes(filePath, _rawFigure);
-        }
-
-        public void ForceWriteBlockDirect(uint blockIndex, byte[] block)
-        {
-            Portal.SendWrite(_slotIndex, blockIndex, block);
+            if (encrypted)
+            {
+                var data = new byte[0x400];
+                var block = new byte[0x10];
+                for (var i = 0; i < 0x40; i++)
+                {
+                    Buffer.BlockCopy(_rawFigure, i *  0x10, block, 0x0, 0x10);
+                    block = FigureEncryption.EncryptBlock(_rawTag, (uint)i, block);
+                    Buffer.BlockCopy(block, 0x0, data, i * 0x10, 0x10);
+                }
+                File.WriteAllBytes(filePath, data);
+            }
+            else
+                File.WriteAllBytes(filePath, _rawFigure);
         }
         
-        public void ForceWriteBlock(uint blockIndex, byte[] block)
+        internal void ForceWriteBlockDirect(uint blockIndex, byte[] block)
+        {
+            WriteToFigure(blockIndex, block);
+        }
+        
+        internal void ForceWriteBlock(uint blockIndex, byte[] block)
         {
             block = FigureEncryption.EncryptBlock(_rawTag, blockIndex, block);
-            Portal.SendWrite(_slotIndex, blockIndex, block);
+            WriteToFigure(blockIndex, block);
         }
 
         private void WriteToFigure(uint blockIndex, byte[] block)

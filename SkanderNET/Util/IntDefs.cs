@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace SkanderNET
+namespace SkanderNET.Util
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct UInt24

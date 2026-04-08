@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     [Flags]
     public enum HeroicChallengesSpyrosAdventure : uint

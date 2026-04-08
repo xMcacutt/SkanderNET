@@ -1,4 +1,4 @@
-﻿namespace SkanderNET.Cyos
+﻿namespace SkanderNET.Data.Cyos
 {
     public enum CyosAura
     {

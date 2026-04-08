@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public enum Hat 
     {
@@ -273,8 +273,12 @@ namespace SkanderNET
         EonsHelm = 0280,
     }
     
+
     public static class HatIndex
     {
+        /// <summary>
+        /// Mapping of hat ids to their names
+        /// </summary>
         public static readonly Dictionary<Hat, string> Hats = new Dictionary<Hat, string>()
         {
             { Hat.None, "No Hat"},

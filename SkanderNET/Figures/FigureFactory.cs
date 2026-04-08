@@ -1,6 +1,7 @@
 ﻿using System.Linq;
+using SkanderNET.Data;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
     internal static class FigureFactory
     {
@@ -26,7 +27,6 @@ namespace SkanderNET
                 case ToyType.RacingPack:
                     return new RacePackFigure(session, header, metaData, rawFigure);
             }
-
             return null;
         }
     }

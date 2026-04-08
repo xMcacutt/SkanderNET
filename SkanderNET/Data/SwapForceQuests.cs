@@ -1,6 +1,7 @@
 ﻿using System;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public struct SwapForceQuests
     {

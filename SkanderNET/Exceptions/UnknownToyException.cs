@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkanderNET
+namespace SkanderNET.Exceptions
 {
     internal class UnknownToyException : Exception
     {

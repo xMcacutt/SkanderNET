@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SkanderNET.Crypto;
+using SkanderNET.Data;
+using SkanderNET.Data.Vehicle;
+using SkanderNET.Exceptions;
+using SkanderNET.PortalComms;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
     [Flags]
     internal enum VehicleFlags : ushort
@@ -237,6 +243,10 @@ namespace SkanderNET
             return true;
         }
         
+        /// <summary>
+        /// Saves changes made to the figure back to the figure or file
+        /// </summary>
+        /// <exception cref="ChecksumGenerationFailureException">Raised when checksum generation fails</exception>
         public void Save()
         {
             _data.AreaSequenceValue1++;
@@ -247,6 +257,13 @@ namespace SkanderNET
             Session.SaveFigure(this, RawData);
         }
 
+        /// <summary>
+        /// Marks the figure for formatting.
+        /// The figure will then be formatted the next time it is placed on a portal or loaded with this library
+        /// </summary>
+        /// <remarks>
+        /// Refuses to format traps containing a villain variant
+        /// </remarks>
         public void Reset()
         {
             Session.MarkForFormat();
@@ -346,12 +363,31 @@ namespace SkanderNET
         public uint PlayTime => _data.TotalPlayTime;
         public uint OwnershipChangedCount => _data.OwnershipChangedCount;
 
+        /// <summary>
+        /// The date and time of the last reset to the figure
+        /// </summary>
+        /// <remarks>
+        /// Seconds are always zero
+        /// </remarks>
         public DateTime LastResetTime => _data.LastReset;
         
+        /// <summary>
+        /// The date and time that the figure was last saved
+        /// </summary>
+        /// <remarks>
+        /// Seconds are always zero
+        /// </remarks>
         public DateTime LastPlacedTime => _data.LastPlaced;
         
+        /// <summary>
+        /// The date and time that the figure was built
+        /// </summary>
+        /// <remarks>
+        /// Seconds and minutes are always zero
+        /// </remarks>
         public DateTime LastBuildTime => _data.LastBuild;
 
+        
         public VehicleTerrainType TerrainType => _terrain;
         
         public VehicleDecorationType Decoration {
@@ -374,6 +410,11 @@ namespace SkanderNET
             set { _data.VehicleShoutType = value; }
         }
 
+        /// <summary>
+        /// Gets the vehicle mod information for the specified mod type
+        /// </summary>
+        /// <param name="type">The mod type to get the vehicle mod information for</param>
+        /// <returns>The vehicle mod information</returns>
         public VehicleMod GetVehicleMod(VehicleModType type)
         {
             var modIndex = type == VehicleModType.Performance 
@@ -382,6 +423,11 @@ namespace SkanderNET
             return VehicleMods.Mods[Toy][type][modIndex];
         }
 
+        /// <summary>
+        /// Sets the vehicle mod by index for the specified mod type
+        /// </summary>
+        /// <param name="type">The mod type to set</param>
+        /// <param name="index">The index of the mod to set</param>
         public void SetVehicleMod(VehicleModType type, int index)
         {
             switch (type)

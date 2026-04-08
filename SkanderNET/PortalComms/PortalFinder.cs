@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.PortalComms
 {
     public static class PortalFinder
     {
@@ -17,8 +18,15 @@ namespace SkanderNET
         private static int _searching;
         private static int _closing;
         
+        /// <summary>
+        /// Invoked when any error occurs during the portal finding search loop
+        /// </summary>
         public static Action<Exception> OnError;
         
+        /// <summary>
+        /// Invoked when a portal is discovered.
+        /// New subscribers will receive the current portal if already discovered prior to subscription.
+        /// </summary>
         public static event Action<Portal> OnPortalFound
         {
             add
@@ -35,6 +43,9 @@ namespace SkanderNET
         
         internal static void Reset() { _activePortal = false; }
 
+        /// <summary>
+        /// Starts the search loop and begins looking for connected portals
+        /// </summary>
         public static void InitSearch()
         {
             if (Interlocked.Exchange(ref _searching, 1) == 1)
@@ -45,6 +56,9 @@ namespace SkanderNET
             _workerThread.Start();
         }
 
+        /// <summary>
+        /// Stops the portal search loop cleans up resources
+        /// </summary>
         public static void Close()
         {
             if (Interlocked.Exchange(ref _closing, 1) == 1)

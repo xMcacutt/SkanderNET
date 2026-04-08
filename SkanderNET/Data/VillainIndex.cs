@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public enum VillainType : byte
     {

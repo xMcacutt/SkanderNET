@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ToyHeader
+    internal struct ToyHeader
     {
         private uint _serialNumber;
         private uint unk0x4;

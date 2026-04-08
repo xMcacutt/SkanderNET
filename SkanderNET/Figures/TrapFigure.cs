@@ -4,15 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using SkanderNET.Crypto;
+using SkanderNET.Data;
+using SkanderNET.Exceptions;
+using SkanderNET.PortalComms;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct Villain
     {
         public VillainType VillainType;
         private byte _isEvolved;
-        public byte _hat;
+        private byte _hat;
         public TrinketType Trinket;
         private fixed byte _nickname[0x20];
         private fixed byte padding0xC4[0xC];
@@ -116,6 +121,13 @@ namespace SkanderNET
             return true;
         }
         
+        /// <summary>
+        /// Marks the figure for formatting.
+        /// The figure will then be formatted the next time it is placed on a portal or loaded with this library
+        /// </summary>
+        /// <remarks>
+        /// Refuses to format traps containing a villain variant
+        /// </remarks>
         public void Reset()
         {
             if (_data.ContainsPreTrappedVillain)
@@ -140,6 +152,25 @@ namespace SkanderNET
             Buffer.BlockCopy(block, 0x0, rawFigure, 0x240 + 0x100, 0x30);
             Buffer.BlockCopy(block, 0x0, rawFigure, 0x240 + 0x140, 0x30);
             Buffer.BlockCopy(block, 0x0, rawFigure, 0x240 + 0x180, 0x30);
+
+            var crc1Area = new byte[0x110];
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x50, crc1Area, 0x0, 0x20);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x80, crc1Area, 0x0 + 0x20, 0x30);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0xC0, crc1Area, 0x0 + 0x50, 0x30);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x100, crc1Area, 0x0 + 0x80, 0x30);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x140, crc1Area, 0x0 + 0xB0, 0x30);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x180, crc1Area, 0x0 + 0xE0, 0x30);
+            var crc2Area = new byte[0x30];
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x10, crc2Area, 0x0, 0x20);
+            Buffer.BlockCopy(rawFigure, 0x80 + 0x40, crc2Area, 0x20, 0x10);
+            var crc1 = CRC16_IBM3740.Generate(crc1Area);
+            var crc2 = CRC16_IBM3740.Generate(crc2Area);
+            Buffer.BlockCopy(BitConverter.GetBytes(crc1), 0, rawFigure, 0x8A, 0x2);
+            Buffer.BlockCopy(BitConverter.GetBytes(crc2), 0, rawFigure, 0x8C, 0x2);
+            var headerBlock = new byte[0x10];
+            Buffer.BlockCopy(rawFigure, 0x80, headerBlock, 0x0, 0x10);
+            var crc3 = CRC16_IBM3740.Generate(headerBlock);
+            Buffer.BlockCopy(BitConverter.GetBytes(crc3), 0, rawFigure, 0x8E, 0x2);
         }
 
         internal static bool Verify(List<DataArea> dataAreas)
@@ -166,7 +197,11 @@ namespace SkanderNET
             }
             return dataAreas.Any(x => x.IsValid);
         }
-
+        
+        /// <summary>
+        /// Saves changes made to the figure back to the figure or file
+        /// </summary>
+        /// <exception cref="ChecksumGenerationFailureException">Raised when checksum generation fails</exception>
         public void Save()
         {
             _data.AreaSequenceValue++;
@@ -186,6 +221,12 @@ namespace SkanderNET
             set { _data.PrimaryVillain = value; }
         }
 
+        /// <summary>
+        /// Attempts to get the villain stored at a specific index in the villain cache
+        /// </summary>
+        /// <param name="villainIndex">The index within the cache to retrieve</param>
+        /// <param name="villain">The villain found at that index</param>
+        /// <returns>true if a villain was found at the index specified</returns>
         public bool TryGetCachedVillain(int villainIndex, out Villain villain)
         {
             if (VillainsStored <= villainIndex || villainIndex > 4 || villainIndex < 0)
@@ -217,6 +258,12 @@ namespace SkanderNET
             }
         }
 
+        /// <summary>
+        /// Attempts to set the villain stored at a specific index in the villain cache
+        /// </summary>
+        /// <param name="villainIndex">The index within the cache to set</param>
+        /// <param name="villain">The villain to assign at the specified index</param>
+        /// <returns>true if a villain was set successfully at the index specified</returns>
         public bool TrySetCachedVillain(int villainIndex, Villain value)
         {
             if (villainIndex > 4 || villainIndex < 0)
@@ -242,6 +289,10 @@ namespace SkanderNET
             return true;
         }
 
+        /// <summary>
+        /// Moves the specified villain into the primary trapped slot and moves all other stored villains down through the cache.
+        /// </summary>
+        /// <param name="villainType">Which villain to move into the primary trap slot</param>
         public void TrapVillain(VillainType villainType)
         {
             for (int i = 4; i > 0; i--)

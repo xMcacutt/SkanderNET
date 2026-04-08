@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using SkanderNET.Exceptions;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.PortalComms
 {
     public class PortalAudio
     {
@@ -178,6 +180,13 @@ namespace SkanderNET
             }
         }
 
+        /// <summary>
+        /// Loads a 16bit PCM block from a wave file
+        /// </summary>
+        /// <param name="path">Path to the wave file to load</param>
+        /// <param name="sampleRate">Sample rate of the file</param>
+        /// <returns>The byte array containing the pcm data</returns>
+        /// <exception cref="Exception">Thrown when there is no valid pcm block in the file</exception>
         public static byte[] LoadWavPcm(string path, out int sampleRate)
         {
             byte[] pcmData = null;

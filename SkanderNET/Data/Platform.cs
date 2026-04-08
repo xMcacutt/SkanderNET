@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     [Flags]
     internal enum Platform2011 : byte

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data.Vehicle
 {
     public enum VehicleDecorationType : byte
     {

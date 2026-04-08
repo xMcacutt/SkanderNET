@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace SkanderNET
+namespace SkanderNET.Crypto
 {
     public static class FigureEncryption
     {

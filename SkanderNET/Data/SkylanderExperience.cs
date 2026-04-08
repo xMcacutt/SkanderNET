@@ -1,4 +1,4 @@
-﻿namespace SkanderNET
+﻿namespace SkanderNET.Data
 {
     internal class SkylanderExperience
     {

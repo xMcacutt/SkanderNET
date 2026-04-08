@@ -1,0 +1,36 @@
+- name: Introduction
+  href: introduction.md
+- name: Getting Started
+  href: getting-started.md
+- name: Portal
+  items:
+  - name: Finding the Portal
+    href: portal-finding.md
+  - name: Basic Portal Interactions 
+    href: portal.md
+  - name: Playing Audio
+    href: portal-audio.md
+- name: Figures
+  items:
+  - name: Handling Placed Figures
+    href: figures.md
+  - name: The Figure Base
+    href: figure-base.md
+  - name: Skylanders
+    href: skylanders.md
+  - name: Traps
+    href: traps.md
+  - name: Vehicles
+    href: vehicles.md
+  - name: Creation Crystals
+    href: creation-crystals.md
+  - name: Saving Changes
+    href: saving.md
+  - name: Resetting Figures
+    href: resetting.md
+- name: Loading From File
+  href: files.md
+- name: Dumping & Backing Up Figures
+  href: dumping.md
+- name: Direct Writes
+  href: direct-writes.md

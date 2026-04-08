@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SkanderNET
+namespace SkanderNET.Exceptions
 {
-    public class FormatRequiredException : Exception
+    internal class FormatRequiredException : Exception
     {
         public FormatRequiredException(string message) : base(message)
         {

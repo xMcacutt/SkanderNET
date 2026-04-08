@@ -2,30 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SkanderNET.Crypto;
+using SkanderNET.Data;
+using SkanderNET.Exceptions;
+using SkanderNET.PortalComms;
+using SkanderNET.Util;
 
-namespace SkanderNET
+namespace SkanderNET.Figures
 {
-    [Flags]
-    public enum TrophyVillain : ushort
-    {
-        None = 0,
-        Glumshanks = 1 << 0x0,
-        DragonHunter = 1 << 0x1,
-        MoneyBone = 1 << 0x2,
-        ChompyMage = 1 << 0x3,
-        DrKrankcase = 1 << 0x4,
-        Mesmerelda = 1 << 0x5,
-        CaptainFrightbeard = 1 << 0x6,
-        GoldenQueen = 1 << 0x7,
-        Spellslamzer = 1 << 0x8,
-        TheGulper = 1 << 0x9,
-        ChefPepperJack = 1 << 0xA,
-        Stratosphere = 1 << 0xB,
-        CapNCluck = 1 << 0xC,
-        Wolfgang = 1 << 0xD,
-        PainYatta = 1 << 0xE,
-    }
-    
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal unsafe struct RacePack
     {
@@ -40,6 +24,9 @@ namespace SkanderNET
         internal byte AreaSequenceValue2;
     }
     
+    /// <summary>
+    /// Trophy figure which unlocks racing levels in Superchargers
+    /// </summary>
     public class RacePackFigure : Figure
     {
         private RacePack _data;
@@ -78,6 +65,10 @@ namespace SkanderNET
             return true;
         }
         
+        /// <summary>
+        /// Saves changes made to the figure back to the figure or file
+        /// </summary>
+        /// <exception cref="ChecksumGenerationFailureException">Raised when checksum generation fails</exception>
         public void Save()
         {
             _data.AreaSequenceValue1++;
@@ -88,6 +79,10 @@ namespace SkanderNET
             Session.SaveFigure(this, RawData);
         }
 
+        /// <summary>
+        /// Marks the figure for formatting.
+        /// The figure will then be formatted the next time it is placed on a portal or loaded with this library
+        /// </summary>
         public void Reset()
         {
             Session.MarkForFormat();
@@ -172,6 +167,9 @@ namespace SkanderNET
             return dataAreas.Any(x => x.IsValid) && (!extendedDataAreas.Any() || extendedDataAreas.Any(x => x.IsValid));
         }
 
+        /// <summary>
+        /// Flags for which villains have been captured for this racing pack
+        /// </summary>
         public TrophyVillain CapturedVillains
         {
             get { return _data.CapturedVillains; }

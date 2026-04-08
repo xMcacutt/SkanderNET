@@ -1,4 +1,4 @@
-﻿namespace SkanderNET
+﻿namespace SkanderNET.Data
 {
     public enum Deco : byte
     {
@@ -47,11 +47,29 @@
     
     public struct VariantInfo
     {
+        /// <summary>
+        /// Any decoration applied to the toy that doesn't necessarily appear in game
+        /// </summary>
         public Deco DecoType { get; }
+        /// <summary>
+        /// If the toy is a supercharger (seemingly unused)
+        /// </summary>
         public bool IsSupercharger { get; }
+        /// <summary>
+        /// If the toy is LightCore
+        /// </summary>
         public bool IsLightCore { get; }
+        /// <summary>
+        /// If the toy is recolored and appears this way in game
+        /// </summary>
         public bool IsInGameVariant { get; }
+        /// <summary>
+        /// If the toy is a repose of a previous character or figure
+        /// </summary>
         public bool IsReposed { get; }
+        /// <summary>
+        /// Which game the toy was created for
+        /// </summary>
         public SkylandersGame Game { get; }
 
         internal VariantInfo(ushort raw)
@@ -64,6 +82,10 @@
             Game = (SkylandersGame)((raw >> 12) & 0xF);
         }
 
+        /// <summary>
+        /// Converts the variant data to a single value
+        /// </summary>
+        /// <returns>The value representing the variant</returns>
         public ushort ToUInt16()
         {
             ushort value = 0;

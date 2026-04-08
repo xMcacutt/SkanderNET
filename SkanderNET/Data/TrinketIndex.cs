@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkanderNET
+namespace SkanderNET.Data
 {
     public enum TrinketType : byte
     {
@@ -41,6 +41,9 @@ namespace SkanderNET
     
     public static class TrinketIndex
     { 
+        /// <summary>
+        /// Mapping of trinket ids to their names
+        /// </summary>
         public static readonly Dictionary<TrinketType, string> Trinkets = new Dictionary<TrinketType, string>
         {
             { TrinketType.None, "None"},
