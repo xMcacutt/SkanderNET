@@ -1,0 +1,1364 @@
+{
+  "source_base_path": "/home/runner/work/SkanderNET/SkanderNET/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "LICENSE.md",
+      "output": {
+        ".html": {
+          "relative_path": "LICENSE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Crypto.FigureEncryption.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Crypto.FigureEncryption.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Crypto.FigureEncryption",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Crypto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Crypto.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Crypto",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.BattleGroundFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.BattleGroundFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.BattleGroundFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosArmGuards.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosArmGuards.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosArmGuards",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosArms.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosArms.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosArms",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosAura.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosAura.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosAura",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosBackpack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosBackpack.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosBackpack",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosBattleClass.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosBattleClass.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosBattleClass",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosChest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosChest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosChest",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosColor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosColor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosColor",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosEars.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosEars.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosEars",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosElementalPower.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosElementalPower.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosElementalPower",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosEyes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosEyes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosEyes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosHead.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosHead.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosHead",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosHeadgear.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosHeadgear.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosHeadgear",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosLegGuards.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosLegGuards.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosLegGuards",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosLegs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosLegs.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosLegs",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosMusic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosMusic.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosMusic",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosSecretTechnique.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosSecretTechnique.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosSecretTechnique",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosShoulderGuards.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosShoulderGuards.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosShoulderGuards",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosSoundEffects.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosSoundEffects.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosSoundEffects",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosSwashbucklerTail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosSwashbucklerTail.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosSwashbucklerTail",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosTail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosTail.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosTail",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosTasset.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosTasset.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosTasset",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosVoice.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosVoice.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosVoice",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosVoiceFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosVoiceFilter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosVoiceFilter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosWeapon.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosWeapon.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosWeapon",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.CyosWeaponPower.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.CyosWeaponPower.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos.CyosWeaponPower",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Cyos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Cyos.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Cyos",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Deco.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Deco.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Deco",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Element.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Element.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Element",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.GiantsQuests.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.GiantsQuests.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.GiantsQuests",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Hat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Hat.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Hat",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.HatIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.HatIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.HatIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.HeroicChallengesGiants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.HeroicChallengesGiants.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.HeroicChallengesGiants",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.HeroicChallengesSpyrosAdventure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.HeroicChallengesSpyrosAdventure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.HeroicChallengesSpyrosAdventure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Platform.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Platform.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Platform",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.SkylandersGame.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.SkylandersGame.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.SkylandersGame",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.SwapForceQuests.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.SwapForceQuests.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.SwapForceQuests",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Toy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Toy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Toy",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.ToyMetaData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.ToyMetaData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.ToyMetaData",
+      "Summary": "<p sourcefile=\"api/SkanderNET.Data.ToyMetaData.yml\" sourcestartlinenumber=\"1\">Generic data about a toy</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.ToySubType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.ToySubType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.ToySubType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.ToyType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.ToyType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.ToyType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.TrinketIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.TrinketIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.TrinketIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.TrinketType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.TrinketType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.TrinketType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.TrophyVillain.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.TrophyVillain.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.TrophyVillain",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Upgrade.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Upgrade.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Upgrade",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.UpgradePath.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.UpgradePath.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.UpgradePath",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.VariantInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.VariantInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.VariantInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleDecorationType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleDecorationType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleDecorationType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleMod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleMod.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleMod",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleModType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleModType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleModType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleNeonType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleNeonType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleNeonType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleShoutType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleShoutType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleShoutType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleTopperIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleTopperIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleTopperIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.VehicleTopperType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.VehicleTopperType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle.VehicleTopperType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.Vehicle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.Vehicle.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.Vehicle",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.VehicleTerrainType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.VehicleTerrainType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.VehicleTerrainType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.VillainIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.VillainIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.VillainIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.VillainMetaData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.VillainMetaData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.VillainMetaData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.VillainType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.VillainType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data.VillainType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Data.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Data",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.AdventurePackFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.AdventurePackFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.AdventurePackFigure",
+      "Summary": "<p sourcefile=\"api/SkanderNET.Figures.AdventurePackFigure.yml\" sourcestartlinenumber=\"1\">Figure that unlocks levels in the games</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.CreationCrystalFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.CreationCrystalFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.CreationCrystalFigure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.Figure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.Figure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.Figure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.FigureSession.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.FigureSession.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.FigureSession",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.MagicItemFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.MagicItemFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.MagicItemFigure",
+      "Summary": "<p sourcefile=\"api/SkanderNET.Figures.MagicItemFigure.yml\" sourcestartlinenumber=\"1\">Figure that activates some ability or unlock in the games but stores no data</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.RacePackFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.RacePackFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.RacePackFigure",
+      "Summary": "<p sourcefile=\"api/SkanderNET.Figures.RacePackFigure.yml\" sourcestartlinenumber=\"1\">Trophy figure which unlocks racing levels in Superchargers</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.SkylanderFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.SkylanderFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.SkylanderFigure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.TrapFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.TrapFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.TrapFigure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.VehicleFigure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.VehicleFigure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.VehicleFigure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.Villain.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.Villain.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures.Villain",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.Figures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.Figures.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.Figures",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.PortalComms.Portal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.PortalComms.Portal.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.PortalComms.Portal",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.PortalComms.PortalAudio.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.PortalComms.PortalAudio.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.PortalComms.PortalAudio",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.PortalComms.PortalFinder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.PortalComms.PortalFinder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.PortalComms.PortalFinder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.PortalComms.PortalSoundClip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.PortalComms.PortalSoundClip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.PortalComms.PortalSoundClip",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkanderNET.PortalComms.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkanderNET.PortalComms.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkanderNET.PortalComms",
+      "Summary": null
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/creation-crystals.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/creation-crystals.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/direct-writes.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/direct-writes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/dumping.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/dumping.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/figure-base.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/figure-base.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/figures.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/figures.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/files.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/files.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/portal-audio.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/portal-audio.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/portal-finding.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/portal-finding.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/portal.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/portal.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/resetting.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/resetting.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/saving.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/saving.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/skylanders.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/skylanders.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "docs/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/toc.html"
+        },
+        ".json": {
+          "relative_path": "docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/traps.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/traps.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/vehicles.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/vehicles.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/favicon.ico",
+      "output": {
+        "resource": {
+          "relative_path": "images/favicon.ico"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo.svg",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

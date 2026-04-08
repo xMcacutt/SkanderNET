@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Handling Placed Figures | SkanderNET </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Handling Placed Figures | SkanderNET ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/figures.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="handling-placed-figures">Handling Placed Figures</h1>
+
+<p>When a <a class="xref" href="../api/SkanderNET.Figures.Figure.html">Figure</a>
+is placed onto an active <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html">Portal</a>,
+the portal raises a series of events.</p>
+<p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigurePlaced">OnFigurePlaced</a> is invoked when a figure is placed on the portal.</p>
+<p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureRemoved">OnFigureRemoved</a> is invoked when a figure is removed from the portal.</p>
+<p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureSaved">OnFigureSaved</a> is invoked when a figure is saved (see base Figure class).</p>
+<p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureProcessed">OnFigureProcessed</a> is invoked when a figure has finished processing.</p>
+<p>Each event provides a Figure instance associated with the affected slot.</p>
+<p>[!NOTE]
+New subscribers to the processed event will immediately receive callbacks for any figures already present on the portal.</p>
+<h2 id="processing-lifecycle">Processing Lifecycle</h2>
+<p>When a figure is first placed, the provided Figure instance is not yet ready for full interaction.
+It must first complete an internal processing step.</p>
+<p>Once processing is complete:</p>
+<ul>
+<li>The <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureProcessed">OnFigureProcessed</a> event is invoked</li>
+<li>The Figure instance can be safely read and modified</li>
+<li>The instance now represents its derived type</li>
+</ul>
+<p>Once the <a class="xref" href="../api/SkanderNET.Figures.Figure.html">Figure</a> is processed, it takes on a derived <a class="xref" href="../api/SkanderNET.Figures.Figure.html">Figure</a> type.</p>
+<p>The <a class="xref" href="../api/SkanderNET.Figures.Figure.html">Figure</a> base class will be described more in the next section but for now, note that it contains some metadata properties about the toy.</p>
+<p>One of these properties is the <a class="xref" href="../api/SkanderNET.Data.ToyType.html">ToyType</a>.
+To get more specific data about the figure, it can be cast directly to its corresponding type.
+This leads to the following pattern:</p>
+<pre><code class="lang-csharp">portal.OnFigureProcessed += (slot, figure) =&gt;
+{
+    if (figure.ToyType == ToyType.RacingPack)
+    {
+        var racePack = figure as RacePackFigure;
+    }
+    if (figure.ToyType == ToyType.Vehicle)
+    {
+        var vehicle = figure as VehicleFigure;
+    }
+    if (figure.ToyType == ToyType.Crystal)
+    {
+        var crystal = figure as CreationCrystalFigure;
+    }
+    if (figure.ToyType == ToyType.Skylander)
+    {
+        var skylander = figure as SkylanderFigure;
+    }
+    else if (figure.ToyType == ToyType.Trap)
+    {
+        var trap = figure as TrapFigure;
+    }
+};
+</code></pre>
+<p><a class="xref" href="../api/SkanderNET.Figures.MagicItemFigure.html">MagicItemFigure</a> and <a class="xref" href="../api/SkanderNET.Figures.AdventurePackFigure.html">AdventurePackFigure</a> are excluded from the above code.
+This is because they have no data which can be accessed nor modified beyond their base figure data.</p>
+<p>This is your main control flow from which everything related to modifying or reading specific properties from the figure should happen.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Event invocation always happens on a separate thread. This can cause issues especially in unity.
+If you are intending for data processed from figure events to modify unity elements, you may need to set flags in the event and catch them in the update loop.</p>
+</div>
+<p>Each <a class="xref" href="../api/SkanderNET.Data.ToyType.html">ToyType</a> has a corresponding subclass deriving from the <a href="figure-base.html">base Figure class</a>.
+The unique properties of each type are discussed in their section in the following sections.</p>
+<table>
+<thead>
+<tr>
+<th>ToyType</th>
+<th>Figure Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_AdventurePack">AdventurePack</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.AdventurePackFigure.html">AdventurePackFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_MagicItem">MagicItem</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.MagicItemFigure.html">MagicItemFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_Skylander">Skylander</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.SkylanderFigure.html">SkylanderFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_Trap">Trap</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.TrapFigure.html">TrapFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_Vehicle">Vehicle</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.VehicleFigure.html">VehicleFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_RacingPack">RacingPack</a> (Trophy)</td>
+<td><a class="xref" href="../api/SkanderNET.Figures.RacePackFigure.html">RacePackFigure</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="../api/SkanderNET.Data.ToyType.html#SkanderNET_Data_ToyType_Crystal">Crystal</a></td>
+<td><a class="xref" href="../api/SkanderNET.Figures.CreationCrystalFigure.html">CreationCrystalFigure</a></td>
+</tr>
+</tbody>
+</table>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/figures.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>The Skylander Figure | SkanderNET </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="The Skylander Figure | SkanderNET ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/skylanders.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="the-skylander-figure">The Skylander Figure</h1>
+
+<div class="NOTE">
+<h5>Note</h5>
+<p>Many properties and methods from <a class="xref" href="../api/SkanderNET.Figures.SkylanderFigure.html">SkylanderFigure</a> are omitted in this document.
+They are self-explanatory. More info in the API section.</p>
+</div>
+<p>Skylanders cover any playable character other than those made from creation crystals.
+This includes core, giants, swappers, trap masters, sidekicks, superchargers, and senseis.</p>
+<p>Swappers are two different figures. The <a class="xref" href="../api/SkanderNET.Figures.Figure.html#SkanderNET_Figures_Figure_ToyName">ToyName</a> on a <code>Swapper</code> is
+therefore the half of the name that is applicable to the half of the swapper. This makes forming the name of swapper combos easier.</p>
+<h2 id="hats">Hats</h2>
+<p>Setting and getting hats on figures is complicated since the method for retrieving a hat depends on the game.
+Therefore, the game you intend to pull from must be specified when getting the hat through</p>
+<pre><code class="lang-csharp">skylander.GetHat(SkylandersGame.SpyrosAdventure) 
+</code></pre>
+<p>or setting the hat through</p>
+<pre><code class="lang-csharp">skylander.SetHat(SkylandersGame.Giants, Hat.CombatHat)
+</code></pre>
+<p>When the hat is set, it should be worn in all games for which the hat is supported but does clear all other hats.</p>
+<h2 id="skills">Skills</h2>
+<p>Modifying skills can be achieved through <a class="xref" href="../api/SkanderNET.Figures.SkylanderFigure.html#SkanderNET_Figures_SkylanderFigure_SetUpgrade_SkanderNET_Data_Upgrade_System_Boolean_">SetUpgrade(Upgrade, bool)</a> and <a class="xref" href="../api/SkanderNET.Figures.SkylanderFigure.html#SkanderNET_Figures_SkylanderFigure_SetUpgradePath_SkanderNET_Data_UpgradePath_">SetUpgradePath(UpgradePath)</a></p>
+<p><code>SetUpgrade</code> specifically sets the upgrades along the path to be unlocked.
+Upgrades with index 6-8 are for the path based skills for the currently selected path. When the path is swapped in games which allow for it,
+the upgrades at 11-13 are swapped with those in 6-8.</p>
+<p>Calling <code>SetUpgradePath</code> mimics this behaviour when switching to the opposite path.</p>
+<h2 id="experience">Experience</h2>
+<p>To make setting and getting the experience easier, the wrapper property, <a class="xref" href="../api/SkanderNET.Figures.SkylanderFigure.html#SkanderNET_Figures_SkylanderFigure_Level">Level</a>, is provided which allows you to specify a level instead of a raw experience value.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/skylanders.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Basic Portal Interactions | SkanderNET </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Basic Portal Interactions | SkanderNET ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/portal.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="basic-portal-interactions">Basic Portal Interactions</h1>
+
+<p>Once a <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html">Portal</a> has been found by the <a class="xref" href="../api/SkanderNET.PortalComms.PortalFinder.html">PortalFinder</a>,
+the portal must be activated for it to begin sending and receiving data by calling <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_Activate">Activate()</a>.</p>
+<p>On a successful activation, the portal will invoke its <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnReady">OnReady</a> event.</p>
+<p>There is an additional <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnError">OnError</a> event which will be invoked if any error occurs during portal communications.</p>
+<h2 id="setting-the-light-color">Setting the Light Color</h2>
+<p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_SetColor_">SetColor</a> has two overloads.
+The first, and most useful, allows you to pass a color by its red, green, and blue components as bytes 0-255.
+The second allows you to provide a <code>System.Drawing</code> color directly.</p>
+<p>Example:</p>
+<pre><code class="lang-csharp">portal.SetColor(0xFF, 0x00, 0x00);
+portal.SetColor(Color.Red);
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>On Trap Team portals, this changes both lights.
+No method is currently provided to set these lights separately.</p>
+</div>
+<p>The following code is an example snippet which causes the portal to flash a few times when it successfully activates.</p>
+<pre><code class="lang-csharp">portal.OnReady += () =&gt;
+{
+    new Thread(() =&gt;
+    {
+        for (int flashIndex = 0; flashIndex &lt; 2; flashIndex++)
+        {
+            portal.SetColor(255, 255, 255);
+            Thread.Sleep(200);
+            portal.SetColor(0, 0, 0);
+            Thread.Sleep(200);
+        }
+        portal.SetColor(0, 255, 0);
+    }).Start();
+};
+</code></pre>
+<h2 id="syncing-the-portal">Syncing the Portal</h2>
+<p>Sometimes the portal can get out of sync or confused about what is placed.
+There are two methods to fix this. The first line of defense is the <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_Sync">Sync()</a> method.
+This sends a message to the portal to tell it to resynchronise.</p>
+<p>If this is still failing under some situations it might be best to reset the portal with <a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_Reset">Reset()</a>.
+This causes the portal object to be destroyed. Assuming the portal search loop has not been closed in the <code>Portal Finder</code>,
+the portal should be found again. <a class="xref" href="../api/SkanderNET.PortalComms.PortalFinder.html#SkanderNET_PortalComms_PortalFinder_OnPortalFound">OnPortalFound</a> will then be reinvoked.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/portal.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

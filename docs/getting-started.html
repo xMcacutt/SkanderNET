@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Getting Started | SkanderNET </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Getting Started | SkanderNET ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/getting-started.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="getting-started">Getting Started</h1>
+
+<p>This library is best installed through <a href="https://www.nuget.org/packages/SkanderNET">nuget</a>.</p>
+<p>It has a single dependency, <a href="https://github.com/libusb/libusb/releases">libusb</a>.
+This library is not packaged with the SkanderNET nuget package.
+You must therefore add the library, and its license, to your project manually.</p>
+<p>Ensure you add the library as a reference and copy it to your output directory without statically linking or compiling into your binary.</p>
+<h2 id="quick-start">Quick Start</h2>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The following information is a condensed guide for communicating with the portal and modifying a figure.
+Please continue to the following pages for a more comprehensive walkthrough of the library and its features.</p>
+</div>
+<p>To begin discovering portals, first subscribe to the <a class="xref" href="../api/SkanderNET.PortalComms.PortalFinder.html">PortalFinder</a>'s <a class="xref" href="../api/SkanderNET.PortalComms.PortalFinder.html#SkanderNET_PortalComms_PortalFinder_OnPortalFound">OnPortalFound</a> event
+and begin the portal search loop with &lt;xref:SkanderNET.PortalComms.InitSearch&gt;</p>
+<pre><code class="lang-csharp">public static void Main(string[] args)
+{
+    PortalFinder.OnError += Console.WriteLine;
+    PortalFinder.OnPortalFound += OnPortalFound;
+    PortalFinder.InitSearch();
+    while (true)
+    {
+        var key = Console.ReadKey();
+    }
+}
+</code></pre>
+<p>Next, define the OnPortalFound delegate, subscribing to the figure events from the discovered portal.
+We also save the portal that's found and activate the portal.</p>
+<pre><code class="lang-csharp">static void OnPortalFound(Portal portal)
+{
+    _currentPortal = portal;
+    
+    portal.OnError += e =&gt; { 
+        Console.WriteLine($&quot;[ERROR] {e.Message}\n{e.StackTrace}&quot;);
+        portal.SetColor(Color.Red);
+    };
+    
+    portal.OnReady += () =&gt;
+    {
+        new Thread(() =&gt;
+        {
+            for (int flashIndex = 0; flashIndex &lt; 2; flashIndex++)
+            {
+                portal.SetColor(255, 255, 255);
+                Thread.Sleep(200);
+                portal.SetColor(0, 0, 0);
+                Thread.Sleep(200);
+            }
+            portal.SetColor(0, 255, 0);
+        }).Start();
+    };
+
+    portal.OnFigurePlaced += (slot, figure) =&gt;
+    {
+        Console.WriteLine($&quot;{figure} was placed.&quot;);
+        SetColorFromElement(portal, figure.Element);
+    };
+    
+    portal.OnFigureProcessed += OnFigureProcessed
+
+    portal.OnFigureRemoved += (slot, figure) =&gt; {
+        Console.WriteLine($&quot;{figure} was removed.&quot;);
+    };
+    
+    portal.Activate();
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>The SetColorFromElement function used above is a custom function you may want to use which sets the color of the portal
+depending on the element of the most recent figure placed.</p>
+<pre><code class="lang-csharp">static void SetColorFromElement(Portal portal, Element element)
+{
+    switch (element)
+    {
+        case Element.None:
+            portal.SetColor(Color.FromArgb(255, 255, 255));
+            break;
+        case Element.Air:
+            portal.SetColor(Color.FromArgb(0x6c, 0xbc, 0xf5));
+            break;
+        case Element.Earth:
+            portal.SetColor(Color.FromArgb(0xdf, 0x90, 0x30));
+            break;
+        case Element.Fire:
+            portal.SetColor(Color.FromArgb(0xff, 0x00, 0x00));
+            break;
+        case Element.Water: 
+            portal.SetColor(Color.FromArgb(0x00, 0x00, 0xff));
+            break;
+        case Element.Magic:
+            portal.SetColor(Color.FromArgb(0xb7, 0x59, 0xf3)); 
+            break;
+        case Element.Tech:
+            portal.SetColor(Color.FromArgb(0xff, 0x70, 0x30));
+            break;
+        case Element.Life:
+            portal.SetColor(Color.FromArgb(0x00, 0xff, 0x00));
+            break;
+        case Element.Undead:
+            portal.SetColor(Color.FromArgb(0xd0, 0x90, 0xd0));
+            break;
+        case Element.Light:
+            portal.SetColor(Color.FromArgb(0xff, 0xcf, 0x80));
+            break;
+        case Element.Dark:
+            portal.SetColor(Color.FromArgb(0x23, 0x3e, 0x5b));
+            break;
+        case Element.Kaos:
+            portal.SetColor(Color.FromArgb(0x72, 0x66, 0x9b));
+            break;
+        default:
+            throw new ArgumentOutOfRangeException(nameof(element), element, null);
+    }
+</code></pre>
+</div>
+<p>Then, we define the OnFigureProcessed delegate.
+Here, we'll filter for the figure type and call a different function for each figure type.
+For brevity, we'll only filter for Skylanders and Creation Crystals.</p>
+<pre><code class="lang-csharp">void OnFigureProcessed(int slot, Figure figure) 
+{
+    switch (figure.ToyType)
+    {
+        case ToyType.Skylander:
+            HandleSkylander(figure as SkylanderFigure);
+            break;
+        case ToyType.Crystal:
+            HandleCrystal(figure as CreationCrystalFigure);
+            break;
+    }
+}
+</code></pre>
+<p>In the handler method, we'll change the money of the skylander and set its Soul Gem to collected.
+Then, we'll save changes to the Skylander.</p>
+<pre><code class="lang-csharp">void HandleSkylander(SkylanderFigure figure) 
+{
+    figure.Money += 200;
+    figure.SetUpgrade(Upgrade.SoulGem, true);
+    figure.Save();
+}
+</code></pre>
+<p>This should be enough to start experimenting but the following pages provide a much more in depth overview of the features
+this library has to offer.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/xMcacutt/SkanderNET/blob/master/docs/docs/getting-started.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
