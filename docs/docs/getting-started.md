@@ -15,7 +15,7 @@ Ensure you add the library as a reference and copy it to your output directory w
 > Please continue to the following pages for a more comprehensive walkthrough of the library and its features.
 
 To begin discovering portals, first subscribe to the <xref:SkanderNET.PortalComms.PortalFinder>'s <xref:SkanderNET.PortalComms.PortalFinder.OnPortalFound> event 
-and begin the portal search loop with <xref:SkanderNET.PortalComms.InitSearch>
+and begin the portal search loop with <xref:SkanderNET.PortalComms.PortalFinder.InitSearch>
 ```csharp
 public static void Main(string[] args)
 {
