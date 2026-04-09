@@ -13,7 +13,7 @@ Use the correct libusb dll for your build system and architecture and provide it
 Avoid statically linking against libusb when using SkanderNET.
 [The libusb project can be found here](https://github.com/libusb/libusb/releases)
 
-Full documentation and guidance on using this library can be found at
+**[Full documentation and guidance on using this library can be found here](https://xmcacutt.github.io/SkanderNET/docs/introduction.html)**
 
 ---
 
