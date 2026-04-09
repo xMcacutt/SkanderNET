@@ -95,8 +95,10 @@ the portal raises a series of events.</p>
 <p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureSaved">OnFigureSaved</a> is invoked when a figure is saved (see base Figure class).</p>
 <p><a class="xref" href="../api/SkanderNET.PortalComms.Portal.html#SkanderNET_PortalComms_Portal_OnFigureProcessed">OnFigureProcessed</a> is invoked when a figure has finished processing.</p>
 <p>Each event provides a Figure instance associated with the affected slot.</p>
-<p>[!NOTE]
-New subscribers to the processed event will immediately receive callbacks for any figures already present on the portal.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>New subscribers to the processed event will immediately receive callbacks for any figures already present on the portal.</p>
+</div>
 <h2 id="processing-lifecycle">Processing Lifecycle</h2>
 <p>When a figure is first placed, the provided Figure instance is not yet ready for full interaction.
 It must first complete an internal processing step.</p>
