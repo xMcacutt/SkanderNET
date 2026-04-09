@@ -14,8 +14,8 @@ the portal raises a series of events.
 
 Each event provides a Figure instance associated with the affected slot.
 
-[!NOTE]
-New subscribers to the processed event will immediately receive callbacks for any figures already present on the portal.
+> [!NOTE]
+> New subscribers to the processed event will immediately receive callbacks for any figures already present on the portal.
 
 ## Processing Lifecycle
 
